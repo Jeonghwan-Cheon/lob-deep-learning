@@ -1,0 +1,13 @@
+# JetBrains PyCharm IDE
+.idea/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# macOS dir files
+.DS_Store
+
+# Dataset
+BenchmarkDatasets/
