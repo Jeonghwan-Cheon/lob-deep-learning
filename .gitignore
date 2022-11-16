@@ -11,6 +11,7 @@ __pycache__/
 
 # Dataset
 fi2010/
+krx/
 
 # Test script
 test.ipynb

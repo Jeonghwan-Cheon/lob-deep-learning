@@ -3,7 +3,7 @@ import sys
 import numpy as np
 import torch
 
-def get_raw(auction = False, normalization = 'Zscore', day = 1):
+def __get_raw__(auction: bool, normalization: str, day: int) -> np.ndarray:
     """
     Handling function for loading raw FI2010 dataset
     Parameters
@@ -43,7 +43,7 @@ def get_raw(auction = False, normalization = 'Zscore', day = 1):
     fi2010_dataset = np.loadtxt(file_path)
     return fi2010_dataset
 
-def extract_stock(raw_data, stock_idx):
+def __extract_stock__(raw_data: np.ndarray, stock_idx: int) -> np.ndarray:
     """
     Extract specific stock data from raw FI2010 dataset
     Parameters
@@ -53,13 +53,13 @@ def extract_stock(raw_data, stock_idx):
     """
     n_boundaries = 4
     boundaries = np.sort(
-        np.argsort(np.abs(np.diff(raw_data[0], prepend=np.inf)))[-n_boundaries - 1 :]
+        np.argsort(np.abs(np.diff(raw_data[0], prepend=np.inf)))[-n_boundaries - 1:]
     )
     boundaries = np.append(boundaries, [raw_data.shape[1]])
     split_data = tuple(raw_data[:, boundaries[i] : boundaries[i + 1]] for i in range(n_boundaries + 1))
     return split_data[stock_idx]
 
-def split_x_y(data):
+def __split_x_y__(data: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     """
     Extract lob data and annotated label from fi-2010 data
     Parameters
@@ -70,7 +70,7 @@ def split_x_y(data):
     y = data[-5:, :].T
     return x, y
 
-def data_processing(x, y, T, k):
+def __data_processing__(x: np.ndarray, y: np.ndarray, T: int, k: int) -> tuple[np.ndarray, np.ndarray]:
     """
     Process whole time-series-data
     Parameters
@@ -93,7 +93,7 @@ def data_processing(x, y, T, k):
     return x_proc, y_proc
 
 class Dataset_fi2010:
-    def __init__(self, auction, normalization, stock_idx, days, T, k):
+    def __init__(self, auction: bool, normalization: str, stock_idx: int, days: list, T: int, k: int) -> None:
         """ Initialization """
         self.auction = auction
         self.normalization = normalization
@@ -109,15 +109,15 @@ class Dataset_fi2010:
 
         self.length = len(y)
 
-    def init_dataset(self):
+    def __init_dataset__(self):
         x_cat = np.array([])
         y_cat = np.array([])
         for stock in self.stock_idx:
             for day in self.days:
-                day_data = extract_stock(\
-                    get_raw(auction=self.auction, normalization=self.normalization, day=day), stock)
-                x, y = split_x_y(day_data)
-                x_day, y_day = data_processing(x, y, self.T, self.k)
+                day_data = __extract_stock__(\
+                    __get_raw__(auction=self.auction, normalization=self.normalization, day=day), stock)
+                x, y = __split_x_y__(day_data)
+                x_day, y_day = __data_processing__(x, y, self.T, self.k)
 
                 if len(x_cat) == 0 and len(y_cat) == 0:
                     x_cat = x_day

@@ -1,4 +1,5 @@
 import torch
+import yaml
 from torch import optim, nn
 from torch.utils.data import Dataset, DataLoader, random_split
 from torchinfo import summary
@@ -12,11 +13,11 @@ from batch_gd import batch_gd
 ############################################################
 auction = False
 normalization = 'DecPre'
-stock_idx = [0]
+stock_idx = [0, 1, 2, 3, 4]
 T = 100
 k = 4
-train_days = [1]
-test_days = [8]
+train_days = [1, 2, 3, 4, 5, 6, 7]
+test_days = [8, 9, 10]
 ############################################################
 
 dataset_train_val = Dataset_fi2010(auction, normalization, stock_idx, train_days, T, k)
@@ -32,30 +33,30 @@ print(f"Training Data Size : {dataset_train.__len__()}")
 print(f"Validation Data Size : {dataset_val.__len__()}")
 print(f"Testing Data Size : {dataset_test.__len__()}")
 
+model = Deeplob()
+model.to(model.device)
+
+summary(model, (1, 1, 100, 40))
+
 ############################################################
 # Hyperparameter setting
 ############################################################
-batch_size = 64
-learning_rate = 0.0001
-epoch = 20
+with open('hyperparams.yml', 'r') as stream:
+    hyperparams = yaml.safe_load(stream)
+
+batch_size = hyperparams[model.name]['batch_size']
+learning_rate = hyperparams[model.name]['learning_rate']
+epoch = hyperparams[model.name]['epoch']
 ############################################################
 
 train_loader = DataLoader(dataset=dataset_train, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(dataset=dataset_val, batch_size=batch_size, shuffle=False)
 test_loader = DataLoader(dataset=dataset_test, batch_size=batch_size, shuffle=False)
 
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-print(device)
-
-model = Deeplob(device=device, name='deeplob')
-model.to(device)
-
-summary(model, (1, 1, 100, 40))
-
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
-train_losses, val_losses = batch_gd(device = device, model = model,
+train_losses, val_losses = batch_gd(model = model,
                                     criterion = criterion, optimizer = optimizer,
                                     train_loader = train_loader, val_loader = val_loader,
                                     epochs=50, name = model.name)

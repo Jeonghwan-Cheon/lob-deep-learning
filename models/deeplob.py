@@ -2,10 +2,10 @@ import torch
 import torch.nn as nn
 
 class Deeplob(nn.Module):
-    def __init__(self, device, name):
+    def __init__(self):
         super().__init__()
-        self.device = device
-        self.name = name
+        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        self.name = 'deeplob'
 
         # convolution blocks
         self.conv1 = nn.Sequential(
