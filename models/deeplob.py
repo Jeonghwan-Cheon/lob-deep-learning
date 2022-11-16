@@ -1,16 +1,16 @@
 import torch
 import torch.nn as nn
 
-class deeplob(nn.Module):
-    def __init__(self, device):
+class Deeplob(nn.Module):
+    def __init__(self, device, name):
         super().__init__()
         self.device = device
+        self.name = name
 
         # convolution blocks
         self.conv1 = nn.Sequential(
             nn.Conv2d(in_channels=1, out_channels=32, kernel_size=(1, 2), stride=(1, 2)),
             nn.LeakyReLU(negative_slope=0.01),
-            #             nn.Tanh(),
             nn.BatchNorm2d(32),
             nn.Conv2d(in_channels=32, out_channels=32, kernel_size=(4, 1)),
             nn.LeakyReLU(negative_slope=0.01),
@@ -21,13 +21,13 @@ class deeplob(nn.Module):
         )
         self.conv2 = nn.Sequential(
             nn.Conv2d(in_channels=32, out_channels=32, kernel_size=(1, 2), stride=(1, 2)),
-            nn.Tanh(),
+            nn.LeakyReLU(negative_slope=0.01),
             nn.BatchNorm2d(32),
             nn.Conv2d(in_channels=32, out_channels=32, kernel_size=(4, 1)),
-            nn.Tanh(),
+            nn.LeakyReLU(negative_slope=0.01),
             nn.BatchNorm2d(32),
             nn.Conv2d(in_channels=32, out_channels=32, kernel_size=(4, 1)),
-            nn.Tanh(),
+            nn.LeakyReLU(negative_slope=0.01),
             nn.BatchNorm2d(32),
         )
         self.conv3 = nn.Sequential(
@@ -42,7 +42,7 @@ class deeplob(nn.Module):
             nn.BatchNorm2d(32),
         )
 
-        # inception moduels
+        # inception modules
         self.inp1 = nn.Sequential(
             nn.Conv2d(in_channels=32, out_channels=64, kernel_size=(1, 1), padding='same'),
             nn.LeakyReLU(negative_slope=0.01),
@@ -71,7 +71,6 @@ class deeplob(nn.Module):
         self.fc1 = nn.Linear(64, 3)
 
     def forward(self, x):
-        # h0: (number of hidden layers, batch size, hidden size)
         h0 = torch.zeros(1, x.size(0), 64).to(self.device)
         c0 = torch.zeros(1, x.size(0), 64).to(self.device)
 

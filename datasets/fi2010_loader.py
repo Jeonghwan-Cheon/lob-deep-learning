@@ -1,4 +1,5 @@
 import os
+import sys
 import numpy as np
 import torch
 
@@ -7,12 +8,12 @@ def get_raw(auction = False, normalization = 'Zscore', day = 1):
     Handling function for loading raw FI2010 dataset
     Parameters
     ----------
-    auction : {True, False}
-    normalization : {'Zscore', 'MinMax', 'DecPre'}
-    day : {1, 2, ..., 10}
+    auction: {True, False}
+    normalization: {'Zscore', 'MinMax', 'DecPre'}
+    day: {1, 2, ..., 10}
     """
 
-    root_path = './'
+    root_path = sys.path[1]
     dataset_path = 'fi2010'
 
     if auction:
@@ -47,8 +48,8 @@ def extract_stock(raw_data, stock_idx):
     Extract specific stock data from raw FI2010 dataset
     Parameters
     ----------
-    raw_data : Numpy Array
-    stock_idx : {0, 1, 2, 3, 4}
+    raw_data: Numpy Array
+    stock_idx: {0, 1, 2, 3, 4}
     """
     n_boundaries = 4
     boundaries = np.sort(
@@ -63,13 +64,22 @@ def split_x_y(data):
     Extract lob data and annotated label from fi-2010 data
     Parameters
     ----------
-    data : Numpy Array
+    data: Numpy Array
     """
     x = data[:40, :].T
     y = data[-5:, :].T
     return x, y
 
 def data_processing(x, y, T, k):
+    """
+    Process whole time-series-data
+    Parameters
+    ----------
+    x: Numpy Array of LOB
+    y: Numpy Array of annotated label
+    T: Length of time frame in single input data
+    k: Prediction horizon{0, 1, 2, 3, 4}
+    """
     [N, D] = x.shape
 
     # x processing
@@ -83,8 +93,10 @@ def data_processing(x, y, T, k):
     return x_proc, y_proc
 
 class Dataset_fi2010:
-    def __init__(self, stock_idx, days, T, k):
-        """Initialization"""
+    def __init__(self, auction, normalization, stock_idx, days, T, k):
+        """ Initialization """
+        self.auction = auction
+        self.normalization = normalization
         self.days = days
         self.stock_idx = stock_idx
         self.T = T
@@ -102,7 +114,8 @@ class Dataset_fi2010:
         y_cat = np.array([])
         for stock in self.stock_idx:
             for day in self.days:
-                day_data = extract_stock(get_raw(auction=False, normalization='Zscore', day=day), stock)
+                day_data = extract_stock(\
+                    get_raw(auction=self.auction, normalization=self.normalization, day=day), stock)
                 x, y = split_x_y(day_data)
                 x_day, y_day = data_processing(x, y, self.T, self.k)
 
