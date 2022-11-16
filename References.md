@@ -1,7 +1,7 @@
 # References
 
 ### 1. Benchmark Dataset for Mid-Price Forecasting of Limit Order Book Data with Machine Learning Methods
-'''bibtex
+```bibtex
 @article{Ntakaris_2018,
 	doi = {10.1002/for.2543},
 	url = {https://doi.org/10.1002%2Ffor.2543},
@@ -15,10 +15,10 @@
 	title = {Benchmark dataset for mid-price forecasting of limit order book data with machine learning methods},
 	journal = {Journal of Forecasting}
 }
-'''
+```
 
 ### 2. DeepLOB: Deep Convolutional Neural Networks for Limit Order Books
-'''bibtex
+```bibtex
 @ARTICLE{8673598,
   author={Zhang, Zihao and Zohren, Stefan and Roberts, Stephen},
   journal={IEEE Transactions on Signal Processing}, 
@@ -28,10 +28,10 @@
   number={11},
   pages={3001-3012},
   doi={10.1109/TSP.2019.2907260}}
-'''
+```
 
 ### 3. BDLOB: Bayesian Deep Convolutional Neural Networks for Limit Order Books
-'''bibtex
+```bibtex
 @article{https://doi.org/10.48550/arxiv.1811.10041,
   doi = {10.48550/ARXIV.1811.10041},
   url = {https://arxiv.org/abs/1811.10041},
@@ -42,10 +42,10 @@
   year = {2018},
   copyright = {arXiv.org perpetual, non-exclusive license}
 }
-'''
+```
 
 ### 4. Model-based Reinforcement Learning for Predictions and Control for Limit Order Books
-'''bibtex
+```bibtex
 @misc{https://doi.org/10.48550/arxiv.1910.03743,
   doi = {10.48550/ARXIV.1910.03743},
   url = {https://arxiv.org/abs/1910.03743},
@@ -56,4 +56,4 @@
   year = {2019},
   copyright = {arXiv.org perpetual, non-exclusive license}
 }
-''''
+```
