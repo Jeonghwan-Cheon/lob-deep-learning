@@ -2,10 +2,12 @@ import torch
 import torch.nn as nn
 
 class Deeplob(nn.Module):
-    def __init__(self):
+    def __init__(self, lighten: bool):
         super().__init__()
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         self.name = 'deeplob'
+        if lighten:
+            self.name += '-lighten'
 
         # convolution blocks
         self.conv1 = nn.Sequential(
@@ -30,8 +32,14 @@ class Deeplob(nn.Module):
             nn.LeakyReLU(negative_slope=0.01),
             nn.BatchNorm2d(32),
         )
+
+        if lighten:
+            conv3_kernel_size = 5
+        else:
+            conv3_kernel_size = 10
+
         self.conv3 = nn.Sequential(
-            nn.Conv2d(in_channels=32, out_channels=32, kernel_size=(1, 10)),
+            nn.Conv2d(in_channels=32, out_channels=32, kernel_size=(1, conv3_kernel_size)),
             nn.LeakyReLU(negative_slope=0.01),
             nn.BatchNorm2d(32),
             nn.Conv2d(in_channels=32, out_channels=32, kernel_size=(4, 1)),

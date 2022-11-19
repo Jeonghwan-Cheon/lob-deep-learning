@@ -13,30 +13,39 @@ from batch_gd import batch_gd
 ############################################################
 auction = False
 normalization = 'DecPre'
-stock_idx = [0, 1, 2, 3, 4]
 T = 100
 k = 4
-train_days = [1, 2, 3, 4, 5, 6, 7]
-test_days = [8, 9, 10]
+lighten = False
+# stock_idx = [0, 1, 2, 3, 4]
+# train_days = [1, 2, 3, 4, 5, 6, 7]
+# test_days = [8, 9, 10]
+stock_idx = [0]
+train_days = [1]
+test_days = [8]
 ############################################################
 
-dataset_train_val = Dataset_fi2010(auction, normalization, stock_idx, train_days, T, k)
+dataset_train_val = Dataset_fi2010(auction, normalization, stock_idx, train_days, T, k, lighten)
 dataset_size = dataset_train_val.__len__()
 train_size = int(dataset_size * 0.8)
 val_size = dataset_size - train_size
 dataset_train, dataset_val = random_split(dataset_train_val, [train_size, val_size])
 del dataset_train_val
 
-dataset_test = Dataset_fi2010(auction, normalization, stock_idx, test_days, T, k)
+dataset_test = Dataset_fi2010(auction, normalization, stock_idx, test_days, T, k, lighten)
 
 print(f"Training Data Size : {dataset_train.__len__()}")
 print(f"Validation Data Size : {dataset_val.__len__()}")
 print(f"Testing Data Size : {dataset_test.__len__()}")
 
-model = Deeplob()
+model = Deeplob(lighten=lighten)
 model.to(model.device)
 
-summary(model, (1, 1, 100, 40))
+if lighten:
+    feature_size = 20
+else:
+    feature_size = 40
+
+summary(model, (1, 1, 100, feature_size))
 
 ############################################################
 # Hyperparameter setting

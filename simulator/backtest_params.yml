@@ -1,0 +1,6 @@
+trading_fee:
+  ks200: 0.00003
+  kq200: 0.00003
+slippage: 1 # tick
+delay: 1 # timeframe (tick / compression ratio)
+initial_balance: 10000000

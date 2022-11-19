@@ -59,14 +59,19 @@ def __extract_stock__(raw_data: np.ndarray, stock_idx: int) -> np.ndarray:
     split_data = tuple(raw_data[:, boundaries[i] : boundaries[i + 1]] for i in range(n_boundaries + 1))
     return split_data[stock_idx]
 
-def __split_x_y__(data: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+def __split_x_y__(data: np.ndarray, lighten: bool) -> tuple[np.ndarray, np.ndarray]:
     """
     Extract lob data and annotated label from fi-2010 data
     Parameters
     ----------
     data: Numpy Array
     """
-    x = data[:40, :].T
+    if lighten:
+        data_length = 20
+    else:
+        data_length = 40
+
+    x = data[:data_length, :].T
     y = data[-5:, :].T
     return x, y
 
@@ -93,7 +98,7 @@ def __data_processing__(x: np.ndarray, y: np.ndarray, T: int, k: int) -> tuple[n
     return x_proc, y_proc
 
 class Dataset_fi2010:
-    def __init__(self, auction: bool, normalization: str, stock_idx: int, days: list, T: int, k: int) -> None:
+    def __init__(self, auction: bool, normalization: str, stock_idx: list, days: list, T: int, k: int, lighten: bool) -> None:
         """ Initialization """
         self.auction = auction
         self.normalization = normalization
@@ -101,8 +106,9 @@ class Dataset_fi2010:
         self.stock_idx = stock_idx
         self.T = T
         self.k = k
+        self.lighten = lighten
 
-        x, y = self.init_dataset()
+        x, y = self.__init_dataset__()
         x = torch.from_numpy(x)
         self.x = torch.unsqueeze(x, 1)
         self.y = torch.from_numpy(y)
@@ -114,9 +120,9 @@ class Dataset_fi2010:
         y_cat = np.array([])
         for stock in self.stock_idx:
             for day in self.days:
-                day_data = __extract_stock__(\
+                day_data = __extract_stock__(
                     __get_raw__(auction=self.auction, normalization=self.normalization, day=day), stock)
-                x, y = __split_x_y__(day_data)
+                x, y = __split_x_y__(day_data, self.lighten)
                 x_day, y_day = __data_processing__(x, y, self.T, self.k)
 
                 if len(x_cat) == 0 and len(y_cat) == 0:

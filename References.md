@@ -3,17 +3,17 @@
 ### 1. Benchmark Dataset for Mid-Price Forecasting of Limit Order Book Data with Machine Learning Methods
 ```bibtex
 @article{Ntakaris_2018,
-	doi = {10.1002/for.2543},
-	url = {https://doi.org/10.1002%2Ffor.2543},
-	year = 2018,
-	month = {aug},
-	publisher = {Wiley},
-	volume = {37},
-	number = {8},
-	pages = {852--866},
-	author = {Adamantios Ntakaris and Martin Magris and Juho Kanniainen and Moncef Gabbouj and Alexandros Iosifidis},
-	title = {Benchmark dataset for mid-price forecasting of limit order book data with machine learning methods},
-	journal = {Journal of Forecasting}
+doi = {10.1002/for.2543},
+  url = {https://doi.org/10.1002%2Ffor.2543},
+  year = 2018,
+  month = {aug},
+  publisher = {Wiley},
+  volume = {37},
+  number = {8},
+  pages = {852--866},
+  author = {Adamantios Ntakaris and Martin Magris and Juho Kanniainen and Moncef Gabbouj and Alexandros Iosifidis},
+  title = {Benchmark dataset for mid-price forecasting of limit order book data with machine learning methods},
+  journal = {Journal of Forecasting}
 }
 ```
 
