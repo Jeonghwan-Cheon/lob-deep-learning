@@ -3,7 +3,7 @@ import sys
 import numpy as np
 import torch
 
-from krx_preprocess import get_normalized_data_list
+from loaders.krx_preprocess import get_normalized_data_list
 
 def __split_x_y__(data: np.ndarray, k: int) -> tuple[np.ndarray, np.ndarray]:
     """

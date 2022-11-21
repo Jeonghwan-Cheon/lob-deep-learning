@@ -19,8 +19,8 @@ k = 4
 lighten = False
 dataset_type = 'krx'
 stock = ['KS200', 'KQ150']
-train_days = [1, 2, 3]
-test_days = [4]
+train_days = [0, 1, 2]
+test_days = [3]
 ############################################################
 
 if dataset_type == 'fi2010':
