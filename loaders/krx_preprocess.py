@@ -3,7 +3,6 @@ import sys
 import csv
 import fnmatch
 import numpy as np
-import torch
 
 def __get_raw__(filename: str, ticker: str) -> np.ndarray:
     """
@@ -172,55 +171,67 @@ def __normalize_data__(ticker: str, normalization: str) -> np.ndarray:
 
     for idx, day in enumerate(day_list):
         if idx+1 > period:
-            price_minus_term = 0
-            price_divide_term = 0
-            volume_minus_term = 0
-            volume_divide_term = 0
-
-            if normalization == 'Zscore':
-                price_minus_term = np.sum(np.multiply(norm_info_price[idx-1:idx+period-1,0], norm_info_price[idx-1:idx+period-1,1]))\
-                             /np.sum(norm_info_price[idx-1:idx+period-1,0]) # price mean
-                price_divide_term = np.sqrt((np.sum(np.multiply(norm_info_price[idx-1:idx+period-1,0], np.square(norm_info_price[idx-1:idx+period-1,2])))\
-                             /np.sum(norm_info_price[idx-1:idx+period-1,0]))) # price std
-                volume_minus_term = np.sum(np.multiply(norm_info_volume[idx - 1:idx + period - 1, 0],
-                                                norm_info_volume[idx - 1:idx + period - 1, 1])) \
-                             / np.sum(norm_info_volume[idx - 1:idx + period - 1, 0]) # volume mean
-                volume_divide_term = np.sqrt((np.sum(np.multiply(norm_info_volume[idx - 1:idx + period - 1, 0],
-                                                        np.square(norm_info_volume[idx - 1:idx + period - 1, 2]))) \
-                                     / np.sum(norm_info_volume[idx - 1:idx + period - 1, 0]))) # volume std
-
-            elif normalization == 'MinMax':
-                price_min = np.min(norm_info_price[idx-1:idx+period-1,3])
-                price_max = np.max(norm_info_price[idx-1:idx+period-1,4])
-                volume_min = np.min(norm_info_volume[idx - 1:idx + period - 1, 3])
-                volume_max = np.max(norm_info_volume[idx - 1:idx + period - 1, 4])
-
-                price_minus_term = price_min
-                price_divide_term = price_max - price_min
-                volume_minus_term = volume_min
-                volume_divide_term = volume_max - volume_min
-
-            elif normalization == 'DecPre':
-                price_decimal = np.max(norm_info_price[idx-1:idx+period-1,5])
-                volume_decimal = np.max(norm_info_volume[idx - 1:idx + period - 1, 5])
-
-                price_minus_term = 0
-                price_divide_term = 10 ** price_decimal
-                volume_minus_term = 0
-                volume_divide_term = 10 ** volume_decimal
-
             source_filename = f'{ticker}-{day}.txt'
             tmp_source_path = os.path.join(source_path, source_filename)
             data = np.loadtxt(tmp_source_path)
 
-            target_filename = f'{ticker}-{day}-{normalization}'
+            target_filename = f'{ticker}-{day}-{normalization}.txt'
             tmp_target_path = os.path.join(target_path, target_filename)
 
-            normalized_data = np.zeros(data.shape)
-            normalized_data[:, list(range(0, 20, 2))] = (data[:, list(range(0, 20, 2))] - price_minus_term) / price_divide_term
-            normalized_data[:, list(range(1, 20, 2))] = (data[:, list(range(1, 20, 2))] - volume_minus_term) / volume_divide_term
+            if not os.path.exists(tmp_target_path):
+                price_minus_term = 0
+                price_divide_term = 0
+                volume_minus_term = 0
+                volume_divide_term = 0
 
-            np.savetxt(tmp_target_path, normalized_data, fmt='%.7e')
-            print(f"{target_filename} saved")
+                if normalization == 'Zscore':
+                    price_minus_term = np.sum(np.multiply(norm_info_price[idx-1:idx+period-1,0],
+                                                          norm_info_price[idx-1:idx+period-1,1])) \
+                                       / np.sum(norm_info_price[idx-1:idx+period-1,0]) # price mean
+                    price_divide_term = np.sqrt((np.sum(np.multiply(norm_info_price[idx-1:idx+period-1,0],
+                                                                    np.square(norm_info_price[idx-1:idx+period-1,2])))
+                                                 /np.sum(norm_info_price[idx-1:idx+period-1,0]))) # price std
+                    volume_minus_term = np.sum(np.multiply(norm_info_volume[idx - 1:idx + period - 1, 0],
+                                                    norm_info_volume[idx - 1:idx + period - 1, 1])) \
+                                 / np.sum(norm_info_volume[idx - 1:idx + period - 1, 0]) # volume mean
+                    volume_divide_term = np.sqrt((np.sum(np.multiply(norm_info_volume[idx - 1:idx + period - 1, 0],
+                                                            np.square(norm_info_volume[idx - 1:idx + period - 1, 2])))
+                                         / np.sum(norm_info_volume[idx - 1:idx + period - 1, 0]))) # volume std
 
-__normalize_data__("KS200", "Zscore")
+                elif normalization == 'MinMax':
+                    price_min = np.min(norm_info_price[idx-1:idx+period-1,3])
+                    price_max = np.max(norm_info_price[idx-1:idx+period-1,4])
+                    volume_min = np.min(norm_info_volume[idx - 1:idx + period - 1, 3])
+                    volume_max = np.max(norm_info_volume[idx - 1:idx + period - 1, 4])
+
+                    price_minus_term = price_min
+                    price_divide_term = price_max - price_min
+                    volume_minus_term = volume_min
+                    volume_divide_term = volume_max - volume_min
+
+                elif normalization == 'DecPre':
+                    price_decimal = np.max(norm_info_price[idx-1:idx+period-1,5])
+                    volume_decimal = np.max(norm_info_volume[idx - 1:idx + period - 1, 5])
+
+                    price_minus_term = 0
+                    price_divide_term = 10 ** price_decimal
+                    volume_minus_term = 0
+                    volume_divide_term = 10 ** volume_decimal
+
+                normalized_data = np.zeros(data.shape)
+                normalized_data[:, list(range(0, 20, 2))] = (data[:, list(range(0, 20, 2))] - price_minus_term) / price_divide_term
+                normalized_data[:, list(range(1, 20, 2))] = (data[:, list(range(1, 20, 2))] - volume_minus_term) / volume_divide_term
+
+                np.savetxt(tmp_target_path, normalized_data, fmt='%.7e')
+                print(f"{target_filename} saved")
+
+def get_normalized_data_list(ticker: str, normalization: str) -> list:
+    __normalize_data__(ticker, normalization)
+    root_path = sys.path[1]
+    dataset_path = 'krx'
+    target_path = os.path.join(root_path, dataset_path, 'normalized')
+    file_list = [file for file in os.listdir(target_path)
+                 if file.endswith(f'-{normalization}.txt') and file.startswith(f'{ticker}-')]
+    file_list = list(set(file_list))
+    file_list.sort(key = lambda x: (int(x.split('-')[1]), int(x.split('-')[2]), int(x.split('-')[3])))
+    return file_list

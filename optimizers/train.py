@@ -4,7 +4,8 @@ from torch import optim, nn
 from torch.utils.data import Dataset, DataLoader, random_split
 from torchinfo import summary
 
-from datasets.fi2010_loader import Dataset_fi2010
+from loaders.fi2010_loader import Dataset_fi2010
+from loaders.krx_loader import Dataset_krx
 from models.deeplob import Deeplob
 from batch_gd import batch_gd
 
@@ -12,26 +13,28 @@ from batch_gd import batch_gd
 # Dataset setting
 ############################################################
 auction = False
-normalization = 'DecPre'
+normalization = 'Zscore'
 T = 100
 k = 4
 lighten = False
-# stock_idx = [0, 1, 2, 3, 4]
-# train_days = [1, 2, 3, 4, 5, 6, 7]
-# test_days = [8, 9, 10]
-stock_idx = [0]
-train_days = [1]
-test_days = [8]
+dataset_type = 'krx'
+stock = ['KS200', 'KQ150']
+train_days = [1, 2, 3]
+test_days = [4]
 ############################################################
 
-dataset_train_val = Dataset_fi2010(auction, normalization, stock_idx, train_days, T, k, lighten)
+if dataset_type == 'fi2010':
+    dataset_train_val = Dataset_fi2010(auction, normalization, stock, train_days, T, k, lighten)
+    dataset_test = Dataset_fi2010(auction, normalization, stock, test_days, T, k, lighten)
+elif dataset_type == 'krx':
+    dataset_train_val = Dataset_krx(normalization, stock, train_days, T, k)
+    dataset_test = Dataset_krx(normalization, stock, test_days, T, k)
+
 dataset_size = dataset_train_val.__len__()
 train_size = int(dataset_size * 0.8)
 val_size = dataset_size - train_size
 dataset_train, dataset_val = random_split(dataset_train_val, [train_size, val_size])
 del dataset_train_val
-
-dataset_test = Dataset_fi2010(auction, normalization, stock_idx, test_days, T, k, lighten)
 
 print(f"Training Data Size : {dataset_train.__len__()}")
 print(f"Validation Data Size : {dataset_val.__len__()}")

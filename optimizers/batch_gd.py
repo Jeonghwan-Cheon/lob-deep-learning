@@ -42,8 +42,9 @@ def batch_gd(model, criterion, optimizer, train_loader, val_loader, epochs: int,
         val_losses[iter] = val_loss
 
         if val_loss < best_test_loss:
-            save_time = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-            torch.save(model, f'./best_val_model_{name}_{save_time}')
+            #save_time = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+            #torch.save(model, f'./best_val_model_{name}_{save_time}')
+            torch.save(model, f'./best_val_model_{name}')
             best_test_loss = val_loss
             best_test_epoch = iter
             print('model saved')
