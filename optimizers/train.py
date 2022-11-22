@@ -17,10 +17,16 @@ normalization = 'Zscore'
 T = 100
 k = 4
 lighten = False
-dataset_type = 'krx'
-stock = ['KS200', 'KQ150']
-train_days = [0, 1, 2]
-test_days = [3]
+############################################################
+dataset_type = 'fi2010'
+stock = [0, 1, 2, 3, 4]
+train_days = [1]
+test_days = [2]
+############################################################
+# dataset_type = 'krx'
+# stock = ['KS200', 'KQ150']
+# train_days = [0, 1, 2, 3]
+# test_days = [4]
 ############################################################
 
 if dataset_type == 'fi2010':
