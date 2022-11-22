@@ -22,11 +22,11 @@ def __split_x_y__(data: np.ndarray, k: int) -> tuple[np.ndarray, np.ndarray]:
         l_i = avg_m_j / m_i - 1
 
         if l_i > 0.002:
-            y[i] = 1
+            y[i] = 0
         elif l_i < -0.002:
-            y[i] = 3
-        else:
             y[i] = 2
+        else:
+            y[i] = 1
 
     x = data[:len(midprice) - k, :]
     return x, y
