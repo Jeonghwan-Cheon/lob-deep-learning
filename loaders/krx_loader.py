@@ -100,3 +100,52 @@ class Dataset_krx:
     def __getitem__(self, index):
         """Generates samples of data"""
         return self.x[index], self.y[index]
+
+def __test_label_dist__():
+    ticker = 'KQ150'
+    k = 1000
+    T = 100
+    normalization = 'Zscore'
+    day = 0
+
+    file_list = get_normalized_data_list(ticker, normalization)
+    file = file_list[day]
+
+    day_data = __load_normalized_data__(file)
+    x, y = __split_x_y__(day_data, k)
+    y = list(y)
+
+    for i in [0, 1, 2]:
+        print(f'{i}: {y.count(i)}')
+
+
+def __vis_sample_lob__():
+    import matplotlib.pyplot as plt
+
+    ticker = 'KQ150'
+    k = 100
+    T = 100
+    normalization = 'Zscore'
+    day = 0
+    idx = 0
+
+    file_list = get_normalized_data_list(ticker, normalization)
+    file = file_list[day]
+
+    day_data = __load_normalized_data__(file)
+    x, y = __split_x_y__(day_data, k)
+    x_day, y_day = __data_processing__(x, y, T)
+    sample_shot = np.transpose(x_day[0])
+
+    image = np.zeros(sample_shot.shape)
+    for i in range(5):
+        image[i , :] = sample_shot[4 * i, :]
+        image[5+i, :] = sample_shot[4 * i + 1, :]
+        image[10 + i, :] = sample_shot[4 * i + 2, :]
+        image[15 + i, :] = sample_shot[4 * i + 3, :]
+
+    plt.imshow(image)
+    plt.show()
+
+__vis_sample_lob__()
+
