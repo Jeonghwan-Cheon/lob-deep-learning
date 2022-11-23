@@ -52,7 +52,7 @@ def __data_processing__(x: np.ndarray, y: np.ndarray, T: int) -> tuple[np.ndarra
     return x_proc, y_proc
 
 def __load_normalized_data__(filename: str) -> np.ndarray:
-    root_path = os.getcwd()
+    root_path = sys.path[0]
     dataset_path = 'krx'
     file_path = os.path.join(root_path, dataset_path, 'normalized', filename)
     return np.loadtxt(file_path)

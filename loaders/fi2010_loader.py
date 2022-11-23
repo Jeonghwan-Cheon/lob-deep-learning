@@ -13,7 +13,7 @@ def __get_raw__(auction: bool, normalization: str, day: int) -> np.ndarray:
     day: {1, 2, ..., 10}
     """
 
-    root_path = os.getcwd()
+    root_path = sys.path[0]
     dataset_path = 'fi2010'
 
     if auction:

@@ -12,7 +12,7 @@ def __get_raw__(filename: str, ticker: str) -> np.ndarray:
     filename
     ticker: {'KS200', 'KQ150}
     """
-    root_path = os.getcwd()
+    root_path = sys.path[0]
     dataset_path = 'krx'
     dataset_type = 'raw'
     file_path = os.path.join(root_path, dataset_path, dataset_type, filename)
@@ -61,7 +61,7 @@ def __single_day_data__(year: int, month: int, day: int, ticker: str) -> np.ndar
     day
     ticker: {'KS200', 'KQ150'}
     """
-    root_path = sys.path[1]
+    root_path = sys.path[0]
     dataset_path = 'krx'
     dataset_type = 'raw'
     path1 = str(year)
@@ -89,7 +89,7 @@ def __single_day_data__(year: int, month: int, day: int, ticker: str) -> np.ndar
     return lob_data_cat[1:-1,:]
 
 def __save_preprocessed_data__() -> None:
-    root_path = os.getcwd()
+    root_path = sys.path[0]
     dataset_path = 'krx'
     source_path = os.path.join(root_path, dataset_path, 'raw')
     target_path = os.path.join(root_path, dataset_path, 'processed')
@@ -129,7 +129,7 @@ def __save_preprocessed_data__() -> None:
 
 def __get_day_list__() -> list:
     __save_preprocessed_data__()
-    root_path = os.getcwd()
+    root_path = sys.path[0]
     dataset_path = 'krx'
     target_path = os.path.join(root_path, dataset_path, 'processed')
     file_list = [file.split('.')[0].split('-', 1)[1] for file in os.listdir(target_path) if file.endswith('.txt')]
@@ -138,7 +138,7 @@ def __get_day_list__() -> list:
     return file_list
 
 def __normalize_data__(ticker: str, normalization: str) -> np.ndarray:
-    root_path = os.getcwd()
+    root_path = sys.path[0]
     dataset_path = 'krx'
     source_path = os.path.join(root_path, dataset_path, 'processed')
     target_path = os.path.join(root_path, dataset_path, 'normalized')
@@ -227,7 +227,7 @@ def __normalize_data__(ticker: str, normalization: str) -> np.ndarray:
 
 def get_normalized_data_list(ticker: str, normalization: str) -> list:
     __normalize_data__(ticker, normalization)
-    root_path = os.getcwd()
+    root_path = sys.path[0]
     dataset_path = 'krx'
     target_path = os.path.join(root_path, dataset_path, 'normalized')
     file_list = [file for file in os.listdir(target_path)
