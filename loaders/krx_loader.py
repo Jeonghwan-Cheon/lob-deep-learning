@@ -66,32 +66,33 @@ class Dataset_krx:
         self.T = T
         self.k = k
 
-        x, y = self.__init_dataset__()
-        x = torch.from_numpy(x)
-        self.x = torch.unsqueeze(x, 1)
-        self.y = torch.from_numpy(y)
-
-        self.length = len(y)
+        self.x, self.y, self.data_val = self.__init_dataset__()
+        self.length = np.count_nonzero(self.data_val)
 
     def __init_dataset__(self):
         x_cat = np.array([])
         y_cat = np.array([])
+        data_val_cat = np.array([])
+
         for ticker in self.tickers:
             file_list = get_normalized_data_list(ticker, self.normalization)
             using_file_list = [file_list[i] for i in self.days]
             for file in using_file_list:
                 day_data = __load_normalized_data__(file)
                 x, y = __split_x_y__(day_data, self.k)
-                x_day, y_day = __data_processing__(x, y, self.T)
+                data_val = np.ones(y.size)
+                data_val[:-self.T] = 0
 
                 if len(x_cat) == 0 and len(y_cat) == 0:
-                    x_cat = x_day
-                    y_cat = y_day
+                    x_cat = x
+                    y_cat = y
+                    data_val_cat = data_val
                 else:
-                    x_cat = np.concatenate((x_cat, x_day), axis=0)
-                    y_cat = np.concatenate((y_cat, y_day), axis=0)
+                    x_cat = np.concatenate((x_cat, x), axis=0)
+                    y_cat = np.concatenate((y_cat, y), axis=0)
+                    data_val_cat = np.concatenate((data_val_cat, data_val), axis=0)
 
-        return x_cat, y_cat
+        return x_cat, y_cat, data_val_cat
 
     def __len__(self):
         """Denotes the total number of samples"""
@@ -99,11 +100,20 @@ class Dataset_krx:
 
     def __getitem__(self, index):
         """Generates samples of data"""
-        return self.x[index], self.y[index]
+        raw_index = np.nonzero(self.data_val)[index]
+
+        x_data = self.x[raw_index-self.T:raw_index, :]
+        y_data = self.y[raw_index]
+
+        x_data = torch.from_numpy(x_data)
+        x_data = torch.unsqueeze(x_data, 1)
+        y_data = torch.from_numpy(y_data)
+
+        return x_data, y_data
 
 def __test_label_dist__():
     ticker = 'KQ150'
-    k = 1000
+    k = 100
     T = 100
     normalization = 'Zscore'
     day = 0
@@ -146,6 +156,3 @@ def __vis_sample_lob__():
 
     plt.imshow(image)
     plt.show()
-
-__vis_sample_lob__()
-
