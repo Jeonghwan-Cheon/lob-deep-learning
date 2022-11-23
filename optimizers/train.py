@@ -1,5 +1,7 @@
 import torch
 import yaml
+import sys
+import os
 from torch import optim, nn
 from torch.utils.data import Dataset, DataLoader, random_split
 from torchinfo import summary
@@ -57,7 +59,8 @@ def train(dataset_type: str, normalization: str, lighten: bool,
     ############################################################
     # Hyperparameter setting
     ############################################################
-    with open('hyperparams.yml', 'r') as stream:
+    root_path = sys.path[0]
+    with open(os.path.join(root_path, 'optimizers', 'hyperparams.yml'), 'r') as stream:
         hyperparams = yaml.safe_load(stream)
 
     batch_size = hyperparams[model.name]['batch_size']
