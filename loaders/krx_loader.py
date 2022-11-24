@@ -68,6 +68,7 @@ class Dataset_krx:
 
         self.x, self.y, self.data_val = self.__init_dataset__()
         self.length = np.count_nonzero(self.data_val)
+        self.val = np.nonzero(self.data_val)[0]
 
     def __init_dataset__(self):
         x_cat = np.array([])
@@ -99,7 +100,7 @@ class Dataset_krx:
 
     def __getitem__(self, index):
         """Generates samples of data"""
-        raw_index = np.nonzero(self.data_val)[0][index]
+        raw_index = self.val[index]
         x_data = self.x[raw_index-self.T:raw_index, :]
         y_data = self.y[raw_index]
 
