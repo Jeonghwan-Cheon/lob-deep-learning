@@ -48,7 +48,7 @@ def __data_processing__(x: np.ndarray, y: np.ndarray, T: int) -> tuple[np.ndarra
         x_proc[i - T] = x[i - T:i, :]
 
     # y processing
-    y_proc = y[T - 1:N]
+    y_proc = y[T - 1:N] - 1
     return x_proc, y_proc
 
 def __load_normalized_data__(filename: str) -> np.ndarray:
@@ -80,8 +80,7 @@ class Dataset_krx:
             for file in using_file_list:
                 day_data = __load_normalized_data__(file)
                 x, y = __split_x_y__(day_data, self.k)
-                data_val = np.ones(y.size)
-                data_val[:-self.T] = 0
+                data_val = np.concatenate((np.zeros(self.T), np.ones(y.size - self.T)), axis=0)
 
                 if len(x_cat) == 0 and len(y_cat) == 0:
                     x_cat = x
@@ -90,7 +89,7 @@ class Dataset_krx:
                 else:
                     x_cat = np.concatenate((x_cat, x), axis=0)
                     y_cat = np.concatenate((y_cat, y), axis=0)
-                    data_val_cat = np.concatenate((data_val_cat, data_val), axis=0)
+                    data_val_cat = np.concanate((data_val_cat, data_val), axis=0)
 
         return x_cat, y_cat, data_val_cat
 
@@ -100,15 +99,13 @@ class Dataset_krx:
 
     def __getitem__(self, index):
         """Generates samples of data"""
-        raw_index = np.nonzero(self.data_val)[index]
-
+        raw_index = np.nonzero(self.data_val)[0][index]
         x_data = self.x[raw_index-self.T:raw_index, :]
         y_data = self.y[raw_index]
 
+        x_data = np.expand_dims(x_data, axis=0)
         x_data = torch.from_numpy(x_data)
-        x_data = torch.unsqueeze(x_data, 1)
-        y_data = torch.from_numpy(y_data)
-
+        y_data = torch.tensor(y_data)
         return x_data, y_data
 
 def __test_label_dist__():

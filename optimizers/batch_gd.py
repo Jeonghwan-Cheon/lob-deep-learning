@@ -4,10 +4,11 @@ from tqdm import tqdm
 import torch
 
 def batch_gd(model, criterion, optimizer, train_loader, val_loader, epochs: int, name: str) -> tuple[list, list, list, list]:
-    train_losses = np.zeros(epochs)
-    val_losses = np.zeros(epochs)
-    train_acces = np.zeros(epochs)
-    val_acces = np.zeros(epochs)
+    train_loss_hist = np.zeros(epochs)
+    val_loss_hist = np.zeros(epochs)
+    train_acc_hist = np.zeros(epochs)
+    val_acc_hist = np.zeros(epochs)
+
     best_test_loss = np.inf
     best_test_epoch = 0
 
@@ -43,20 +44,20 @@ def batch_gd(model, criterion, optimizer, train_loader, val_loader, epochs: int,
             loss = criterion(outputs, targets)
             val_loss.append(loss.item())
             tmp_acc = torch.count_nonzero(torch.argmax(outputs, dim=1) == targets).item() / targets.size(0)
-            train_acc.append(tmp_acc)
-        val_losses = np.mean(val_loss)
-        val_acces = np.mean(val_acc)
+            val_acc.append(tmp_acc)
+        val_loss = np.mean(val_loss)
+        val_acc = np.mean(val_acc)
 
         # Save losses
-        train_losses[iter] = train_loss
-        val_losses[iter] = val_loss
-        train_acces[iter] = train_acc
-        val_losses[iter] = val_acc
+        train_loss_hist[iter] = train_loss
+        val_loss_hist[iter] = val_loss
+        train_acc_hist[iter] = train_acc
+        val_loss_hist[iter] = val_acc
 
         if val_loss < best_test_loss:
-            #save_time = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+            #
             #torch.save(model, f'./best_val_model_{name}_{save_time}')
-            torch.save(model, f'./best_val_model_{name}')
+            torch.save(model, f'./best_val_model_{name}.pt')
             best_test_loss = val_loss
             best_test_epoch = iter
             print('model saved')
@@ -67,4 +68,9 @@ def batch_gd(model, criterion, optimizer, train_loader, val_loader, epochs: int,
           Validation Loss: {val_loss:.4f}, Validation Acc: {val_acc: .4f},\
           Duration: {dt}, Best Val Epoch: {best_test_epoch}')
 
-    return train_losses, train_acces, val_losses, val_acces
+    # torch.save({
+    #     'model': model.state_dict(),
+    #     'optimizer': optimizer.state_dict()
+    # }, PATH + 'all.tar')
+
+    return train_loss_hist, train_acc_hist, val_loss_hist, val_acc_hist

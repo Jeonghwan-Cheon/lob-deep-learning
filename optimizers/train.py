@@ -75,9 +75,14 @@ def train(dataset_type: str, normalization: str, lighten: bool,
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
-    train_losses, val_losses = batch_gd(model = model,
-                                        criterion = criterion, optimizer = optimizer,
-                                        train_loader = train_loader, val_loader = val_loader,
-                                        epochs=50, name = model.name)
+    train_loss_hist, train_acc_hist, val_loss_hist, val_acc_hist = batch_gd(model = model,
+                                                                            criterion = criterion, optimizer = optimizer,
+                                                                            train_loader = train_loader, val_loader = val_loader,
+                                                                            epochs=50, name = model.name)
+
+    print(train_loss_hist)
+    print(train_acc_hist)
+    print(val_loss_hist)
+    print(val_acc_hist)
 
     return
