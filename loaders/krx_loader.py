@@ -89,7 +89,7 @@ class Dataset_krx:
                 else:
                     x_cat = np.concatenate((x_cat, x), axis=0)
                     y_cat = np.concatenate((y_cat, y), axis=0)
-                    data_val_cat = np.concanate((data_val_cat, data_val), axis=0)
+                    data_val_cat = np.concatenate((data_val_cat, data_val), axis=0)
 
         return x_cat, y_cat, data_val_cat
 
