@@ -77,7 +77,7 @@ def train(dataset_type, normalization, lighten, T, k, stock, train_test_ratio):
     train_loss_hist, train_acc_hist, val_loss_hist, val_acc_hist = batch_gd(model = model,
                                                                             criterion = criterion, optimizer = optimizer,
                                                                             train_loader = train_loader, val_loader = val_loader,
-                                                                            epochs=50, name = model.name)
+                                                                            epochs=epoch, name = model.name)
 
     print(train_loss_hist)
     print(train_acc_hist)
