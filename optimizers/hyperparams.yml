@@ -2,10 +2,10 @@ deeplob:
   batch_size: 1024
   learning_rate: 0.0001
   epoch: 20
-  num_workers: 4
+  num_workers: 8
 
 deeplob-lighten:
   batch_size: 2048
   learning_rate: 0.0001
   epoch: 20
-  num_workers: 4
+  num_workers: 8
