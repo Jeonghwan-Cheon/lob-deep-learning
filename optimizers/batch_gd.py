@@ -52,7 +52,7 @@ def batch_gd(model, criterion, optimizer, train_loader, val_loader, epochs, name
         train_loss_hist[iter] = train_loss
         val_loss_hist[iter] = val_loss
         train_acc_hist[iter] = train_acc
-        val_loss_hist[iter] = val_acc
+        val_acc_hist[iter] = val_acc
 
         if val_loss < best_test_loss:
             #
