@@ -3,7 +3,7 @@ import sys
 import numpy as np
 import torch
 
-def __get_raw__(auction: bool, normalization: str, day: int) -> np.ndarray:
+def __get_raw__(auction, normalization, day):
     """
     Handling function for loading raw FI2010 dataset
     Parameters
@@ -43,7 +43,7 @@ def __get_raw__(auction: bool, normalization: str, day: int) -> np.ndarray:
     fi2010_dataset = np.loadtxt(file_path)
     return fi2010_dataset
 
-def __extract_stock__(raw_data: np.ndarray, stock_idx: int) -> np.ndarray:
+def __extract_stock__(raw_data, stock_idx):
     """
     Extract specific stock data from raw FI2010 dataset
     Parameters
@@ -59,7 +59,7 @@ def __extract_stock__(raw_data: np.ndarray, stock_idx: int) -> np.ndarray:
     split_data = tuple(raw_data[:, boundaries[i] : boundaries[i + 1]] for i in range(n_boundaries + 1))
     return split_data[stock_idx]
 
-def __split_x_y__(data: np.ndarray, lighten: bool) -> tuple[np.ndarray, np.ndarray]:
+def __split_x_y__(data, lighten):
     """
     Extract lob data and annotated label from fi-2010 data
     Parameters
@@ -75,7 +75,7 @@ def __split_x_y__(data: np.ndarray, lighten: bool) -> tuple[np.ndarray, np.ndarr
     y = data[-5:, :].T
     return x, y
 
-def __data_processing__(x: np.ndarray, y: np.ndarray, T: int, k: int) -> tuple[np.ndarray, np.ndarray]:
+def __data_processing__(x, y, T, k):
     """
     Process whole time-series-data
     Parameters
@@ -98,7 +98,7 @@ def __data_processing__(x: np.ndarray, y: np.ndarray, T: int, k: int) -> tuple[n
     return x_proc, y_proc
 
 class Dataset_fi2010:
-    def __init__(self, auction: bool, normalization: str, stock_idx: list, days: list, T: int, k: int, lighten: bool) -> None:
+    def __init__(self, auction, normalization, stock_idx, days, T, k, lighten):
         """ Initialization """
         self.auction = auction
         self.normalization = normalization

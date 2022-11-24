@@ -12,8 +12,7 @@ from loaders.krx_loader import Dataset_krx
 from models.deeplob import Deeplob
 from optimizers.batch_gd import batch_gd
 
-def train(dataset_type: str, normalization: str, lighten: bool,
-          T: int, k: int, stock: list, train_test_ratio = float):
+def train(dataset_type, normalization, lighten, T, k, stock, train_test_ratio):
 
     if dataset_type == 'fi2010':
         auction = False

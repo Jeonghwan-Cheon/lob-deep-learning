@@ -4,7 +4,7 @@ import csv
 import fnmatch
 import numpy as np
 
-def __get_raw__(filename: str, ticker: str) -> np.ndarray:
+def __get_raw__(filename, ticker):
     """
     Handling function for loading raw krx dataset
     Parameters
@@ -51,7 +51,7 @@ def __get_raw__(filename: str, ticker: str) -> np.ndarray:
 
     return lob_data.astype(np.uint32)
 
-def __single_day_data__(year: int, month: int, day: int, ticker: str) -> np.ndarray:
+def __single_day_data__(year, month, day, ticker):
     """
     Collect LOB data collected in a single day
     Parameters
@@ -88,7 +88,7 @@ def __single_day_data__(year: int, month: int, day: int, ticker: str) -> np.ndar
 
     return lob_data_cat[1:-1,:]
 
-def __save_preprocessed_data__() -> None:
+def __save_preprocessed_data__():
     root_path = sys.path[0]
     dataset_path = 'krx'
     source_path = os.path.join(root_path, dataset_path, 'raw')
@@ -127,7 +127,7 @@ def __save_preprocessed_data__() -> None:
                 print(f"{tmp_filename} saved")
     return
 
-def __get_day_list__() -> list:
+def __get_day_list__():
     __save_preprocessed_data__()
     root_path = sys.path[0]
     dataset_path = 'krx'
@@ -137,7 +137,7 @@ def __get_day_list__() -> list:
     file_list.sort(key = lambda x: (int(x.split('-')[0]), int(x.split('-')[1]), int(x.split('-')[2])))
     return file_list
 
-def __normalize_data__(ticker: str, normalization: str) -> np.ndarray:
+def __normalize_data__(ticker, normalization):
     root_path = sys.path[0]
     dataset_path = 'krx'
     source_path = os.path.join(root_path, dataset_path, 'processed')
@@ -225,7 +225,7 @@ def __normalize_data__(ticker: str, normalization: str) -> np.ndarray:
                 np.savetxt(tmp_target_path, normalized_data, fmt='%.7e')
                 print(f"{target_filename} saved")
 
-def get_normalized_data_list(ticker: str, normalization: str) -> list:
+def get_normalized_data_list(ticker, normalization):
     __normalize_data__(ticker, normalization)
     root_path = sys.path[0]
     dataset_path = 'krx'

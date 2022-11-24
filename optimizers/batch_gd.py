@@ -3,7 +3,7 @@ from datetime import datetime
 from tqdm import tqdm
 import torch
 
-def batch_gd(model, criterion, optimizer, train_loader, val_loader, epochs: int, name: str) -> tuple[list, list, list, list]:
+def batch_gd(model, criterion, optimizer, train_loader, val_loader, epochs, name):
     train_loss_hist = np.zeros(epochs)
     val_loss_hist = np.zeros(epochs)
     train_acc_hist = np.zeros(epochs)

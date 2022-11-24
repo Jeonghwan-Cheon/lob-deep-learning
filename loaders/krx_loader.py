@@ -5,7 +5,7 @@ import torch
 
 from loaders.krx_preprocess import get_normalized_data_list
 
-def __split_x_y__(data: np.ndarray, k: int) -> tuple[np.ndarray, np.ndarray]:
+def __split_x_y__(data, k):
     """
     Extract lob data and annotated label from fi-2010 data
     Parameters
@@ -31,7 +31,7 @@ def __split_x_y__(data: np.ndarray, k: int) -> tuple[np.ndarray, np.ndarray]:
     x = data[:len(midprice) - k, :]
     return x, y
 
-def __data_processing__(x: np.ndarray, y: np.ndarray, T: int) -> tuple[np.ndarray, np.ndarray]:
+def __data_processing__(x, y, T):
     """
     Process whole time-series-data
     Parameters
@@ -51,14 +51,14 @@ def __data_processing__(x: np.ndarray, y: np.ndarray, T: int) -> tuple[np.ndarra
     y_proc = y[T - 1:N] - 1
     return x_proc, y_proc
 
-def __load_normalized_data__(filename: str) -> np.ndarray:
+def __load_normalized_data__(filename):
     root_path = sys.path[0]
     dataset_path = 'krx'
     file_path = os.path.join(root_path, dataset_path, 'normalized', filename)
     return np.loadtxt(file_path)
 
 class Dataset_krx:
-    def __init__(self, normalization: str, tickers: list, days: list, T: int, k: int) -> None:
+    def __init__(self, normalization, tickers, days, T, k):
         """ Initialization """
         self.normalization = normalization
         self.days = days

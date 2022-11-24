@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 
 class Deeplob(nn.Module):
-    def __init__(self, lighten: bool):
+    def __init__(self, lighten):
         super().__init__()
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         self.name = 'deeplob'
