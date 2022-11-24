@@ -65,11 +65,12 @@ def train(dataset_type, normalization, lighten, T, k, stock, train_test_ratio):
     batch_size = hyperparams[model.name]['batch_size']
     learning_rate = hyperparams[model.name]['learning_rate']
     epoch = hyperparams[model.name]['epoch']
+    num_workers = hyperparams[model.name]['num_workers']
     ############################################################
 
-    train_loader = DataLoader(dataset=dataset_train, batch_size=batch_size, shuffle=True)
-    val_loader = DataLoader(dataset=dataset_val, batch_size=batch_size, shuffle=False)
-    test_loader = DataLoader(dataset=dataset_test, batch_size=batch_size, shuffle=False)
+    train_loader = DataLoader(dataset=dataset_train, batch_size=batch_size, shuffle=True, num_workers=num_workers)
+    val_loader = DataLoader(dataset=dataset_val, batch_size=batch_size, shuffle=False, num_workers=num_workers)
+    test_loader = DataLoader(dataset=dataset_test, batch_size=batch_size, shuffle=False, num_workers=num_workers)
 
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)

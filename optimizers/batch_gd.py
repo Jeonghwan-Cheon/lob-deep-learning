@@ -17,7 +17,7 @@ def batch_gd(model, criterion, optimizer, train_loader, val_loader, epochs, name
         t0 = datetime.now()
         train_loss = []
         train_acc = []
-        for inputs, targets in train_loader:
+        for inputs, targets in tqdm(train_loader):
             # move data to GPU
             inputs, targets = inputs.to(model.device, dtype=torch.float), targets.to(model.device, dtype=torch.int64)
             # zero the parameter gradients
@@ -38,7 +38,7 @@ def batch_gd(model, criterion, optimizer, train_loader, val_loader, epochs, name
         model.eval()
         val_loss = []
         val_acc = []
-        for inputs, targets in val_loader:
+        for inputs, targets in tqdm(val_loader):
             inputs, targets = inputs.to(model.device, dtype=torch.float), targets.to(model.device, dtype=torch.int64)
             outputs = model(inputs)
             loss = criterion(outputs, targets)
