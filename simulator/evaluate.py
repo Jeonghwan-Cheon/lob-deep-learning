@@ -45,13 +45,13 @@ def test(model_id, custom_test_days = None):
     new_model.load_state_dict(model.state_dict())
     model = new_model
 
-    dataset_info = logger.read_log(model_id, 'dataset_info')
-    dataset_type = dataset_info['dataset_type']
-    normalization = dataset_info['normalization']
-    lighten = dataset_info['lighten']
-    T = dataset_info['T']
-    k = dataset_info['k']
-    stock = dataset_info['stock']
+    # dataset_info = logger.read_log(model_id, 'dataset_info')
+    # dataset_type = dataset_info['dataset_type']
+    # normalization = dataset_info['normalization']
+    # lighten = dataset_info['lighten']
+    # T = dataset_info['T']
+    # k = dataset_info['k']
+    # stock = dataset_info['stock']
 
     dataset_type = 'krx'
     normalization = 'Zscore'
@@ -60,10 +60,10 @@ def test(model_id, custom_test_days = None):
     k = 100
     stock = ['KS200', 'KQ150']
 
-    if custom_test_days == None:
-        test_days = dataset_info['test_days']
-    else:
-        test_days = custom_test_days
+    # if custom_test_days == None:
+    #     test_days = dataset_info['test_days']
+    # else:
+    #     test_days = custom_test_days
 
     test_days = [6, 7]
 
