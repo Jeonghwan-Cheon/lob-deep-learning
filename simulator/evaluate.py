@@ -53,10 +53,19 @@ def test(model_id, custom_test_days = None):
     k = dataset_info['k']
     stock = dataset_info['stock']
 
+    dataset_type = 'krx'
+    normalization = 'Zscore'
+    lighten = True
+    T = 100
+    k = 100
+    stock = ['KS200', 'KQ150']
+
     if custom_test_days == None:
         test_days = dataset_info['test_days']
     else:
         test_days = custom_test_days
+
+    test_days = [6, 7]
 
     dataset_test = __get_dataset__(model_id, dataset_type, normalization, lighten, T, k, stock, test_days)
 
