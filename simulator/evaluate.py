@@ -4,6 +4,7 @@ import sys
 import os
 import yaml
 import pickle
+from tqdm import tqdm
 from torch import nn
 from torch.utils.data import DataLoader
 from sklearn.metrics import accuracy_score, classification_report
@@ -12,18 +13,13 @@ from loaders.fi2010_loader import Dataset_fi2010
 from loaders.krx_preprocess import get_normalized_data_list
 from loaders.krx_loader import Dataset_krx
 from loggers import logger
+from models.deeplob import Deeplob
 
-def __get_dataset__(model_id, dataset_type, normalization, lighten, T, k, stock, train_test_ratio):
+def __get_dataset__(model_id, dataset_type, normalization, lighten, T, k, stock, test_days):
     if dataset_type == 'fi2010':
         auction = False
-        days = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     elif dataset_type == 'krx':
         lighten = True
-        day_length = len(get_normalized_data_list(stock[0], normalization))
-        days = list(range(day_length))
-
-    train_day_length = round(len(days) * train_test_ratio)
-    test_days = days[train_day_length:]
 
     if dataset_type == 'fi2010':
         dataset_test = Dataset_fi2010(auction, normalization, stock, test_days, T, k, lighten)
@@ -41,9 +37,28 @@ def __get_hyperparams__(name):
         hyperparams = yaml.safe_load(stream)
     return hyperparams[name]
 
-def test(model_id, dataset_type, normalization, lighten, T, k, stock, train_test_ratio):
-    model = torch.load(os.path.join(logger.find_save_path(model_id), 'best_val_model.pt'))
-    dataset_test = __get_dataset__(model_id, dataset_type, normalization, lighten, T, k, stock, train_test_ratio)
+def test(model_id, custom_test_days = None):
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    model = torch.load(os.path.join(logger.find_save_path(model_id), 'best_val_model.pt'), map_location=device)
+
+    new_model = Deeplob(lighten=True)
+    new_model.load_state_dict(model.state_dict())
+    model = new_model
+
+    dataset_info = logger.read_log(model_id, 'dataset_info')
+    dataset_type = dataset_info['dataset_type']
+    normalization = dataset_info['normalization']
+    lighten = dataset_info['lighten']
+    T = dataset_info['T']
+    k = dataset_info['k']
+    stock = dataset_info['stock']
+
+    if custom_test_days == None:
+        test_days = dataset_info['test_days']
+    else:
+        test_days = custom_test_days
+
+    dataset_test = __get_dataset__(model_id, dataset_type, normalization, lighten, T, k, stock, test_days)
 
     hyperparams = __get_hyperparams__(model.name)
     batch_size = hyperparams['batch_size']
@@ -53,31 +68,35 @@ def test(model_id, dataset_type, normalization, lighten, T, k, stock, train_test
 
     all_targets = []
     all_predictions = []
+    all_outputs = []
 
-    for inputs, targets in test_loader:
+    count = 0
+    for inputs, targets in tqdm(test_loader):
         # Move to GPU
         model.eval()
-        inputs, targets = inputs.to(model.device, dtype=torch.float), targets.to(model.device, dtype=torch.int64)
+        inputs, targets = inputs.to(device, dtype=torch.float), targets.to(device, dtype=torch.int64)
 
         # Forward pass
         outputs = model(inputs)
 
         # Get prediction
         # torch.max returns both max and argmax
-        _, predictions = torch.max(outputs, 1)
+        max_output, predictions = torch.max(outputs, 1)
 
         # update counts
         all_targets.append(targets.cpu().numpy())
         all_predictions.append(predictions.cpu().numpy())
+        all_outputs.append(max_output.detach().numpy())
 
     all_targets = np.concatenate(all_targets)
     all_predictions = np.concatenate(all_predictions)
 
     test_acc = accuracy_score(all_targets, all_predictions)
 
-    with open(os.path.join(logger.find_save_path(model_id), 'prediction.pkl'), 'w') as f:
-        pickle.dump([all_targets, all_predictions], f)
+    with open(os.path.join(logger.find_save_path(model_id), 'prediction.pkl'), 'wb') as f:
+        pickle.dump([all_targets, all_predictions, all_outputs], f)
 
     print(f"Test acc: {test_acc:.4f}")
     print(classification_report(all_targets, all_predictions, digits=4))
+
     return
