@@ -8,8 +8,7 @@ def generate_id(name):
     model_id = f'{name}_{init_time}'
 
     root_path = sys.path[0]
-    dir_path = os.path.join(root_path, 'loggers', 'results', id)
-    print(dir_path)
+    dir_path = os.path.join(root_path, 'loggers', 'results', model_id)
     if not os.path.exists(dir_path):
         os.makedirs(dir_path)
 
