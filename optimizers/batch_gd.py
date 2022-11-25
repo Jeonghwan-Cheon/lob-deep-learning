@@ -7,7 +7,7 @@ import torch
 from loggers import logger
 
 
-def batch_gd(id, model, criterion, optimizer, train_loader, val_loader, epochs, name):
+def batch_gd(model_id, model, criterion, optimizer, train_loader, val_loader, epochs, name):
     training_info = {
         'train_loss_hist': [],
         'val_loss_hist': [],
@@ -61,7 +61,7 @@ def batch_gd(id, model, criterion, optimizer, train_loader, val_loader, epochs, 
         training_info['val_acc_hist'].append(val_acc)
 
         if val_loss < best_test_loss:
-            torch.save(model, os.path.join(logger.find_save_path(id), 'best_val_model.pt'))
+            torch.save(model, os.path.join(logger.find_save_path(model_id), 'best_val_model.pt'))
             best_test_loss = val_loss
             best_test_epoch = iter
             print('model saved')
@@ -77,7 +77,7 @@ def batch_gd(id, model, criterion, optimizer, train_loader, val_loader, epochs, 
         'model_state_dict': model.state_dict(),
         'optimizer_state_dict': optimizer.state_dict(),
         'loss': train_loss,
-    }, os.path.join(logger.find_save_path(id), 'checkpoint.pt'))
+    }, os.path.join(logger.find_save_path(model_id), 'checkpoint.pt'))
 
-    logger.logger(id, 'training_info', training_info)
+    logger.logger(model_id, 'training_info', training_info)
     return

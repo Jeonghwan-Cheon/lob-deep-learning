@@ -14,7 +14,7 @@ from optimizers.batch_gd import batch_gd
 from loggers import logger
 
 
-def __get_dataset__(id, dataset_type, normalization, lighten, T, k, stock, train_test_ratio):
+def __get_dataset__(model_id, dataset_type, normalization, lighten, T, k, stock, train_test_ratio):
     if dataset_type == 'fi2010':
         auction = False
         days = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -53,7 +53,7 @@ def __get_dataset__(id, dataset_type, normalization, lighten, T, k, stock, train
         'train_days': train_days,
         'test_days': test_days
     }
-    logger.logger(id, 'dataset_info', dataset_info)
+    logger.logger(model_id, 'dataset_info', dataset_info)
 
     return dataset_train, dataset_val
 
@@ -63,9 +63,9 @@ def __get_hyperparams__(name):
         hyperparams = yaml.safe_load(stream)
     return hyperparams[name]
 
-def train(id, dataset_type, normalization, lighten, T, k, stock, train_test_ratio):
+def train(model_id, dataset_type, normalization, lighten, T, k, stock, train_test_ratio):
     # get train and validation set
-    dataset_train, dataset_val = __get_dataset__(id, dataset_type, normalization, lighten, T, k, stock, train_test_ratio)
+    dataset_train, dataset_val = __get_dataset__(model_id, dataset_type, normalization, lighten, T, k, stock, train_test_ratio)
 
     model = Deeplob(lighten=lighten)
     model.to(model.device)
@@ -91,7 +91,7 @@ def train(id, dataset_type, normalization, lighten, T, k, stock, train_test_rati
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
-    batch_gd(model = model, criterion = criterion, optimizer = optimizer,
+    batch_gd(model_id = model_id, model = model, criterion = criterion, optimizer = optimizer,
              train_loader = train_loader, val_loader = val_loader, epochs=epoch, name = model.name)
     return
 

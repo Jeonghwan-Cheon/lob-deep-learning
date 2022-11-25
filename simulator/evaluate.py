@@ -13,7 +13,7 @@ from loaders.krx_preprocess import get_normalized_data_list
 from loaders.krx_loader import Dataset_krx
 from loggers import logger
 
-def __get_dataset__(id, dataset_type, normalization, lighten, T, k, stock, train_test_ratio):
+def __get_dataset__(model_id, dataset_type, normalization, lighten, T, k, stock, train_test_ratio):
     if dataset_type == 'fi2010':
         auction = False
         days = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -41,9 +41,9 @@ def __get_hyperparams__(name):
         hyperparams = yaml.safe_load(stream)
     return hyperparams[name]
 
-def test(id, dataset_type, normalization, lighten, T, k, stock, train_test_ratio):
-    model = torch.load(os.path.join(logger.find_save_path(id), 'best_val_model.pt'))
-    dataset_test = __get_dataset__(id, dataset_type, normalization, lighten, T, k, stock, train_test_ratio)
+def test(model_id, dataset_type, normalization, lighten, T, k, stock, train_test_ratio):
+    model = torch.load(os.path.join(logger.find_save_path(model_id), 'best_val_model.pt'))
+    dataset_test = __get_dataset__(model_id, dataset_type, normalization, lighten, T, k, stock, train_test_ratio)
 
     hyperparams = __get_hyperparams__(model.name)
     batch_size = hyperparams['batch_size']
@@ -75,7 +75,7 @@ def test(id, dataset_type, normalization, lighten, T, k, stock, train_test_ratio
 
     test_acc = accuracy_score(all_targets, all_predictions)
 
-    with open(os.path.join(logger.find_save_path(id), 'prediction.pkl'), 'w') as f:
+    with open(os.path.join(logger.find_save_path(model_id), 'prediction.pkl'), 'w') as f:
         pickle.dump([all_targets, all_predictions], f)
 
     print(f"Test acc: {test_acc:.4f}")

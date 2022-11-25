@@ -2,8 +2,8 @@ import os
 import matplotlib.pyplot as plt
 from loggers import logger
 
-def vis_training_process(id):
-    training_info = logger.read_log(id, 'training')
+def vis_training_process(model_id):
+    training_info = logger.read_log(model_id, 'training')
 
     plt.figure(figsize=(15,6))
 
@@ -21,5 +21,5 @@ def vis_training_process(id):
     plt.xlabel('Epoch')
     plt.ylabel('Accuracy')
 
-    path = logger.find_save_path(id)
+    path = logger.find_save_path(model_id)
     plt.savefig(os.path.join(path, 'training_process.eps'), format='eps')
