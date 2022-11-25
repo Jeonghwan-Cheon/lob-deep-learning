@@ -17,7 +17,21 @@ doi = {10.1002/for.2543},
 }
 ```
 
-### 2. DeepLOB: Deep Convolutional Neural Networks for Limit Order Books
+### 2. Forecasting Stock Prices from the Limit Order Book Using Convolutional Neural Networks
+```
+@INPROCEEDINGS{8010701,
+  author={Tsantekidis, Avraam and Passalis, Nikolaos and Tefas, Anastasios and Kanniainen, Juho and Gabbouj, Moncef and Iosifidis, Alexandros},
+  booktitle={2017 IEEE 19th Conference on Business Informatics (CBI)},
+  title={Forecasting Stock Prices from the Limit Order Book Using Convolutional Neural Networks},
+  year={2017},
+  volume={01},
+  number={},
+  pages={7-12},
+  doi={10.1109/CBI.2017.23}
+}
+```
+
+### 3. DeepLOB: Deep Convolutional Neural Networks for Limit Order Books
 ```bibtex
 @ARTICLE{8673598,
   author={Zhang, Zihao and Zohren, Stefan and Roberts, Stephen},
@@ -30,13 +44,12 @@ doi = {10.1002/for.2543},
   doi={10.1109/TSP.2019.2907260}}
 ```
 
-### 3. BDLOB: Bayesian Deep Convolutional Neural Networks for Limit Order Books
+### 4. BDLOB: Bayesian Deep Convolutional Neural Networks for Limit Order Books
 ```bibtex
 @article{https://doi.org/10.48550/arxiv.1811.10041,
   doi = {10.48550/ARXIV.1811.10041},
   url = {https://arxiv.org/abs/1811.10041},
   author = {Zhang, Zihao and Zohren, Stefan and Roberts, Stephen},
-  keywords = {Computational Finance (q-fin.CP), FOS: Economics and business, FOS: Economics and business},
   title = {BDLOB: Bayesian Deep Convolutional Neural Networks for Limit Order Books},
   publisher = {arXiv},
   year = {2018},
@@ -44,16 +57,15 @@ doi = {10.1002/for.2543},
 }
 ```
 
-### 4. Model-based Reinforcement Learning for Predictions and Control for Limit Order Books
+### 5. Transformers for Limit Order Books
 ```bibtex
-@misc{https://doi.org/10.48550/arxiv.1910.03743,
-  doi = {10.48550/ARXIV.1910.03743},
-  url = {https://arxiv.org/abs/1910.03743},
-  author = {Wei, Haoran and Wang, Yuanbo and Mangu, Lidia and Decker, Keith},
-  keywords = {Artificial Intelligence (cs.AI), FOS: Computer and information sciences, FOS: Computer and information sciences},
-  title = {Model-based Reinforcement Learning for Predictions and Control for Limit Order Books},
+@misc{https://doi.org/10.48550/arxiv.2003.00130,
+  doi = {10.48550/ARXIV.2003.00130},
+  url = {https://arxiv.org/abs/2003.00130},
+  author = {Wallbridge, James},
+  title = {Transformers for Limit Order Books},
   publisher = {arXiv},
-  year = {2019},
+  year = {2020},
   copyright = {arXiv.org perpetual, non-exclusive license}
 }
 ```

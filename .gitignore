@@ -13,6 +13,5 @@ __pycache__/
 fi2010/
 krx/
 
-# Test script
-test.ipynb
-test.py
+# Training & rimulation result
+loggers/Results/

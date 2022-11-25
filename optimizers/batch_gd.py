@@ -1,13 +1,19 @@
+import os
 import numpy as np
 from datetime import datetime
 from tqdm import tqdm
 import torch
 
-def batch_gd(model, criterion, optimizer, train_loader, val_loader, epochs, name):
-    train_loss_hist = np.zeros(epochs)
-    val_loss_hist = np.zeros(epochs)
-    train_acc_hist = np.zeros(epochs)
-    val_acc_hist = np.zeros(epochs)
+from loggers import logger
+
+
+def batch_gd(id, model, criterion, optimizer, train_loader, val_loader, epochs, name):
+    training_info = {
+        'train_loss_hist': [],
+        'val_loss_hist': [],
+        'train_acc_hist': [],
+        'val_acc_hist': []
+    }
 
     best_test_loss = np.inf
     best_test_epoch = 0
@@ -49,28 +55,29 @@ def batch_gd(model, criterion, optimizer, train_loader, val_loader, epochs, name
         val_acc = np.mean(val_acc)
 
         # Save losses
-        train_loss_hist[iter] = train_loss
-        val_loss_hist[iter] = val_loss
-        train_acc_hist[iter] = train_acc
-        val_acc_hist[iter] = val_acc
+        training_info['train_loss_hist'].append(train_loss)
+        training_info['val_loss_hist'].append(val_loss)
+        training_info['train_acc_hist'].append(train_acc)
+        training_info['val_acc_hist'].append(val_acc)
 
         if val_loss < best_test_loss:
-            #
-            #torch.save(model, f'./best_val_model_{name}_{save_time}')
-            torch.save(model, f'./best_val_model_{name}.pt')
+            torch.save(model, os.path.join(logger.find_save_path(id), 'best_val_model.pt'))
             best_test_loss = val_loss
             best_test_epoch = iter
             print('model saved')
 
         dt = datetime.now() - t0
-        print(f'Epoch {iter + 1}/{epochs}, \
-          Train Loss: {train_loss:.4f}, Train Acc: {train_acc: .4f},\
-          Validation Loss: {val_loss:.4f}, Validation Acc: {val_acc: .4f},\
-          Duration: {dt}, Best Val Epoch: {best_test_epoch}')
+        print(f'Epoch {iter + 1}/{epochs}, '
+              f'Train Loss: {train_loss:.4f}, Train Acc: {train_acc: .4f}, '
+              f'Validation Loss: {val_loss:.4f}, Validation Acc: {val_acc: .4f}, '
+              f'Duration: {dt}, Best Val Epoch: {best_test_epoch}')
 
-    # torch.save({
-    #     'model': model.state_dict(),
-    #     'optimizer': optimizer.state_dict()
-    # }, PATH + 'all.tar')
+    torch.save({
+        'epoch': epochs,
+        'model_state_dict': model.state_dict(),
+        'optimizer_state_dict': optimizer.state_dict(),
+        'loss': train_loss,
+    }, os.path.join(logger.find_save_path(id), 'checkpoint.pt'))
 
-    return train_loss_hist, train_acc_hist, val_loss_hist, val_acc_hist
+    logger.logger(id, 'training_info', training_info)
+    return

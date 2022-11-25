@@ -2,8 +2,8 @@ import torch
 import yaml
 import sys
 import os
-from torch import optim, nn
-from torch.utils.data import Dataset, DataLoader, random_split
+from torch import nn
+from torch.utils.data import DataLoader, random_split
 from torchinfo import summary
 
 from loaders.fi2010_loader import Dataset_fi2010
@@ -11,9 +11,10 @@ from loaders.krx_preprocess import get_normalized_data_list
 from loaders.krx_loader import Dataset_krx
 from models.deeplob import Deeplob
 from optimizers.batch_gd import batch_gd
+from loggers import logger
 
-def train(dataset_type, normalization, lighten, T, k, stock, train_test_ratio):
 
+def __get_dataset__(id, dataset_type, normalization, lighten, T, k, stock, train_test_ratio):
     if dataset_type == 'fi2010':
         auction = False
         days = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -28,10 +29,8 @@ def train(dataset_type, normalization, lighten, T, k, stock, train_test_ratio):
 
     if dataset_type == 'fi2010':
         dataset_train_val = Dataset_fi2010(auction, normalization, stock, train_days, T, k, lighten)
-        dataset_test = Dataset_fi2010(auction, normalization, stock, test_days, T, k, lighten)
     elif dataset_type == 'krx':
         dataset_train_val = Dataset_krx(normalization, stock, train_days, T, k)
-        dataset_test = Dataset_krx(normalization, stock, test_days, T, k)
     else:
         print("Error: wrong dataset type")
 
@@ -43,7 +42,30 @@ def train(dataset_type, normalization, lighten, T, k, stock, train_test_ratio):
 
     print(f"Training Data Size : {dataset_train.__len__()}")
     print(f"Validation Data Size : {dataset_val.__len__()}")
-    print(f"Testing Data Size : {dataset_test.__len__()}")
+
+    dataset_info = {
+        'dataset_type': dataset_type,
+        'normalization': normalization,
+        'lighten': lighten,
+        'T': T,
+        'k': k,
+        'stock': stock,
+        'train_days': train_days,
+        'test_days': test_days
+    }
+    logger.logger(id, 'dataset_info', dataset_info)
+
+    return dataset_train, dataset_val
+
+def __get_hyperparams__(name):
+    root_path = sys.path[0]
+    with open(os.path.join(root_path, 'optimizers', 'hyperparams.yaml'), 'r') as stream:
+        hyperparams = yaml.safe_load(stream)
+    return hyperparams[name]
+
+def train(id, dataset_type, normalization, lighten, T, k, stock, train_test_ratio):
+    # get train and validation set
+    dataset_train, dataset_val = __get_dataset__(id, dataset_type, normalization, lighten, T, k, stock, train_test_ratio)
 
     model = Deeplob(lighten=lighten)
     model.to(model.device)
@@ -55,34 +77,24 @@ def train(dataset_type, normalization, lighten, T, k, stock, train_test_ratio):
 
     summary(model, (1, 1, 100, feature_size))
 
-    ############################################################
     # Hyperparameter setting
-    ############################################################
-    root_path = sys.path[0]
-    with open(os.path.join(root_path, 'optimizers', 'hyperparams.yml'), 'r') as stream:
-        hyperparams = yaml.safe_load(stream)
+    hyperparams = __get_hyperparams__(model.name)
 
-    batch_size = hyperparams[model.name]['batch_size']
-    learning_rate = hyperparams[model.name]['learning_rate']
-    epoch = hyperparams[model.name]['epoch']
-    num_workers = hyperparams[model.name]['num_workers']
-    ############################################################
+    batch_size = hyperparams['batch_size']
+    learning_rate = hyperparams['learning_rate']
+    epoch = hyperparams['epoch']
+    num_workers = hyperparams['num_workers']
 
     train_loader = DataLoader(dataset=dataset_train, batch_size=batch_size, shuffle=True, num_workers=num_workers)
     val_loader = DataLoader(dataset=dataset_val, batch_size=batch_size, shuffle=False, num_workers=num_workers)
-    test_loader = DataLoader(dataset=dataset_test, batch_size=batch_size, shuffle=False, num_workers=num_workers)
 
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
-    train_loss_hist, train_acc_hist, val_loss_hist, val_acc_hist = batch_gd(model = model,
-                                                                            criterion = criterion, optimizer = optimizer,
-                                                                            train_loader = train_loader, val_loader = val_loader,
-                                                                            epochs=epoch, name = model.name)
+    batch_gd(model = model, criterion = criterion, optimizer = optimizer,
+             train_loader = train_loader, val_loader = val_loader, epochs=epoch, name = model.name)
+    return
 
-    print(train_loss_hist)
-    print(train_acc_hist)
-    print(val_loss_hist)
-    print(val_acc_hist)
-
+def continual_learning(id, model, days):
+    pass
     return
