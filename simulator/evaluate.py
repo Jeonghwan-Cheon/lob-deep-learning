@@ -65,7 +65,7 @@ def test(model_id, custom_test_days = None):
     # else:
     #     test_days = custom_test_days
 
-    test_days = [6, 7]
+    test_days = [5, 6]
 
     dataset_test = __get_dataset__(model_id, dataset_type, normalization, lighten, T, k, stock, test_days)
 
