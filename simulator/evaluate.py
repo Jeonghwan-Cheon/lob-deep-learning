@@ -59,7 +59,7 @@ def test(model_id, custom_test_days = None):
     lighten = True
     T = 100
     k = 100
-    stock = ['KS200', 'KQ150']
+    stock = ['KQ150']
 
     # if custom_test_days == None:
     #     test_days = dataset_info['test_days']

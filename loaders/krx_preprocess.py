@@ -4,6 +4,7 @@ import csv
 import fnmatch
 import numpy as np
 
+
 def __get_raw__(filename, ticker):
     """
     Handling function for loading raw krx dataset

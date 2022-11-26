@@ -31,6 +31,7 @@ def __get_dataset__(model_id, dataset_type, normalization, lighten, T, k, stock,
         dataset_train_val = Dataset_fi2010(auction, normalization, stock, train_days, T, k, lighten)
     elif dataset_type == 'krx':
         dataset_train_val = Dataset_krx(normalization, stock, train_days, T, k)
+        dataset_test = Dataset_krx(normalization, stock, test_days, T, k)
     else:
         print("Error: wrong dataset type")
 
@@ -38,6 +39,7 @@ def __get_dataset__(model_id, dataset_type, normalization, lighten, T, k, stock,
     train_size = int(dataset_size * 0.8)
     val_size = dataset_size - train_size
     dataset_train, dataset_val = random_split(dataset_train_val, [train_size, val_size])
+    dataset_val = dataset_test
     del dataset_train_val
 
     print(f"Training Data Size : {dataset_train.__len__()}")
