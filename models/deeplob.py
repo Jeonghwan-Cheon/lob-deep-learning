@@ -75,7 +75,7 @@ class Deeplob(nn.Module):
         )
 
         # lstm layers
-        self.gru = nn.GRU(input_size=192, hidden_size=64, num_layers=1, batch_first=True)
+        self.lstm = nn.LSTM(input_size=192, hidden_size=64, num_layers=1, batch_first=True)
         self.fc1 = nn.Linear(64, 3)
 
     def forward(self, x):
@@ -95,7 +95,7 @@ class Deeplob(nn.Module):
         x = x.permute(0, 2, 1, 3)
         x = torch.reshape(x, (-1, x.shape[1], x.shape[2]))
 
-        x, _ = self.gru(x, (h0, c0))
+        x, _ = self.lstm(x, (h0, c0))
         x = x[:, -1, :]
         x = self.fc1(x)
         forecast_y = torch.softmax(x, dim=1)
