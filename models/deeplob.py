@@ -95,7 +95,7 @@ class Deeplob(nn.Module):
         x = x.permute(0, 2, 1, 3)
         x = torch.reshape(x, (-1, x.shape[1], x.shape[2]))
 
-        x, _ = self.GRU(x, (h0, c0))
+        x, _ = self.gru(x, (h0, c0))
         x = x[:, -1, :]
         x = self.fc1(x)
         forecast_y = torch.softmax(x, dim=1)
