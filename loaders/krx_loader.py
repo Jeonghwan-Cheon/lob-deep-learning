@@ -86,7 +86,7 @@ class Dataset_krx:
 
                 if self.compression != 1:
                     comp_length = np.floor(len(y)/self.compression)
-                    sampler = list(range(0, int(comp_length * self.compression), self.compression))
+                    sampler = list(range(0, int((comp_length+1) * self.compression), self.compression))
                     x = x[sampler]
                     y = y[sampler]
                     data_val = data_val[sampler]
