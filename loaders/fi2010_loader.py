@@ -144,3 +144,30 @@ class Dataset_fi2010:
     def __getitem__(self, index):
         """Generates samples of data"""
         return self.x[index], self.y[index]
+
+def __vis_sample_lob__():
+    import matplotlib.pyplot as plt
+
+    stock = 0
+    k = 100
+    normalization = 'Zscore'
+    day = 9
+    idx = 1000
+    lighten = True
+
+    day_data = __extract_stock__(
+        __get_raw__(auction=False, normalization=normalization, day=day), stock)
+    x, y = __split_x_y__(day_data, lighten)
+    sample_shot = np.transpose(x[0 + idx:100 + idx])
+
+    image = np.zeros(sample_shot.shape)
+    for i in range(5):
+        image[14 - i , :] = sample_shot[4 * i, :]
+        image[4 - i, :] = sample_shot[4 * i + 1, :]
+        image[15 + i, :] = sample_shot[4 * i + 2, :]
+        image[5 + i, :] = sample_shot[4 * i + 3, :]
+
+    plt.imshow(image)
+    plt.title('Sample LOB from FI-2010 dataset')
+    plt.colorbar()
+    plt.show()

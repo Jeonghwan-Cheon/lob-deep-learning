@@ -58,7 +58,7 @@ def __load_normalized_data__(filename):
     return np.loadtxt(file_path)
 
 class Dataset_krx:
-    def __init__(self, normalization, tickers, days, T, k, compression=1):
+    def __init__(self, normalization, tickers, days, T, k, compression=10):
         """ Initialization """
         self.normalization = normalization
         self.days = days
@@ -140,25 +140,26 @@ def __vis_sample_lob__():
 
     ticker = 'KQ150'
     k = 100
-    T = 100
     normalization = 'Zscore'
-    day = 0
-    idx = 0
+    day = 1
+    idx = 1000
+    compress = 10
 
     file_list = get_normalized_data_list(ticker, normalization)
     file = file_list[day]
 
     day_data = __load_normalized_data__(file)
     x, y = __split_x_y__(day_data, k)
-    x_day, y_day = __data_processing__(x, y, T)
-    sample_shot = np.transpose(x_day[0])
+    sample_shot = np.transpose(x[list(range(0+idx, 100*compress+idx, compress))])
 
     image = np.zeros(sample_shot.shape)
     for i in range(5):
-        image[i , :] = sample_shot[4 * i, :]
-        image[5+i, :] = sample_shot[4 * i + 1, :]
-        image[10 + i, :] = sample_shot[4 * i + 2, :]
-        image[15 + i, :] = sample_shot[4 * i + 3, :]
+        image[14 - i , :] = sample_shot[4 * i, :]
+        image[4 - i, :] = sample_shot[4 * i + 1, :]
+        image[15 + i, :] = sample_shot[4 * i + 2, :]
+        image[5 + i, :] = sample_shot[4 * i + 3, :]
 
     plt.imshow(image)
+    plt.title('Sample LOB from KRX dataset')
+    plt.colorbar()
     plt.show()
