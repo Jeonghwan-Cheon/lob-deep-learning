@@ -58,7 +58,7 @@ def __load_normalized_data__(filename):
     return np.loadtxt(file_path)
 
 class Dataset_krx:
-    def __init__(self, normalization, tickers, days, T, k, compression=10):
+    def __init__(self, normalization, tickers, days, T, k, compression=1):
         """ Initialization """
         self.normalization = normalization
         self.days = days
