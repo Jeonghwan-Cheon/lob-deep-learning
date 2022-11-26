@@ -1,23 +1,23 @@
 deeplob:
   batch_size: 1024
   learning_rate: 0.01
-  epoch: 30
+  epoch: 10
   num_workers: 4
 
 deeplob-lighten:
   batch_size: 2048
   learning_rate: 0.01
-  epoch: 30
+  epoch: 10
   num_workers: 4
 
 lobster:
   batch_size: 1024
   learning_rate: 0.01
-  epoch: 30
+  epoch: 10
   num_workers: 4
 
 lobster-light:
   batch_size: 1024
   learning_rate: 0.01
-  epoch: 30
+  epoch: 10
   num_workers: 4

@@ -6,7 +6,7 @@ if __name__ == '__main__':
 
     model_id = logger.generate_id('deeplob-light')
     train.train(
-        model_id=model_id, dataset_type = 'krx', normalization= 'Zscore', lighten= True,
-        T= 100, k= 100, stock= ['KS200', 'KQ150'], train_test_ratio = 0.7)
+        model_id=model_id, dataset_type = 'fi2010', normalization= 'Zscore', lighten= True,
+        T= 100, k= 100, stock= [0, 1, 2, 3, 4], train_test_ratio = 0.7)
     evaluate.test(model_id=model_id)
 
