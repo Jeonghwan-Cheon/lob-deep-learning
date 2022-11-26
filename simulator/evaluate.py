@@ -94,9 +94,14 @@ def test(model_id, custom_test_days = None):
         max_output, predictions = torch.max(outputs, 1)
 
         # update counts
-        all_targets.append(targets.to(device).numpy())
-        all_predictions.append(predictions.to(device).numpy())
-        all_outputs.append(max_output.to(device).numpy())
+        if torch.cuda.is_available():
+            all_targets.append(targets.numpy())
+            all_predictions.append(predictions.numpy())
+            all_outputs.append(max_output.numpy())
+        else:
+            all_targets.append(targets.device().numpy())
+            all_predictions.append(predictions.device().numpy())
+            all_outputs.append(max_output.detach().numpy())
 
     all_targets = np.concatenate(all_targets)
     all_predictions = np.concatenate(all_predictions)
