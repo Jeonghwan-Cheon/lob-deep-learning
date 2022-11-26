@@ -44,6 +44,7 @@ def test(model_id, custom_test_days = None):
     new_model = Deeplob(lighten=True)
     new_model.load_state_dict(model.state_dict(), map_location=device)
     model = new_model
+    model.to(device)
 
     # dataset_info = logger.read_log(model_id, 'dataset_info')
     # dataset_type = dataset_info['dataset_type']
