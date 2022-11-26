@@ -82,7 +82,7 @@ class Dataset_krx:
             for file in using_file_list:
                 day_data = __load_normalized_data__(file)
                 x, y = __split_x_y__(day_data, self.k)
-                data_val = np.concatenate((np.zeros(self.T), np.ones(y.size - self.T)), axis=0)
+                data_val = np.concatenate((np.zeros(int(self.T * self.compression)), np.ones(y.size - int(self.T * self.compression))), axis=0)
 
                 if self.compression != 1:
                     comp_length = np.floor(len(y)/self.compression)
