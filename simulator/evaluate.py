@@ -56,7 +56,7 @@ def test(model_id, custom_test_days = None):
 
     dataset_type = 'fi2010'
     normalization = 'Zscore'
-    lighten = False
+    lighten = True
     T = 100
     k = 4
     stock = [0, 1, 2, 3, 4]
