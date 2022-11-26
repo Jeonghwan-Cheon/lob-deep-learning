@@ -78,7 +78,7 @@ def test(model_id, custom_test_days = None):
 
     all_targets = []
     all_predictions = []
-    all_outputs = []
+    #all_outputs = []
 
     count = 0
     for inputs, targets in tqdm(test_loader):
@@ -96,7 +96,7 @@ def test(model_id, custom_test_days = None):
         # update counts
         all_targets.append(targets.cpu().numpy())
         all_predictions.append(predictions.cpu().numpy())
-        all_outputs.append(max_output.detach().numpy())
+        #all_outputs.append(max_output.detach().numpy())
 
     all_targets = np.concatenate(all_targets)
     all_predictions = np.concatenate(all_predictions)
@@ -104,7 +104,7 @@ def test(model_id, custom_test_days = None):
     test_acc = accuracy_score(all_targets, all_predictions)
 
     with open(os.path.join(logger.find_save_path(model_id), 'prediction.pkl'), 'wb') as f:
-        pickle.dump([all_targets, all_predictions, all_outputs], f)
+        pickle.dump([all_targets, all_predictions], f)
 
     print(f"Test acc: {test_acc:.4f}")
     print(classification_report(all_targets, all_predictions, digits=4))
