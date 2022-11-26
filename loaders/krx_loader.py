@@ -58,13 +58,14 @@ def __load_normalized_data__(filename):
     return np.loadtxt(file_path)
 
 class Dataset_krx:
-    def __init__(self, normalization, tickers, days, T, k):
+    def __init__(self, normalization, tickers, days, T, k, compression=1):
         """ Initialization """
         self.normalization = normalization
         self.days = days
         self.tickers = tickers
         self.T = T
         self.k = k
+        self.compression = compression
 
         self.x, self.y, self.data_val = self.__init_dataset__()
         self.length = np.count_nonzero(self.data_val)
@@ -82,6 +83,13 @@ class Dataset_krx:
                 day_data = __load_normalized_data__(file)
                 x, y = __split_x_y__(day_data, self.k)
                 data_val = np.concatenate((np.zeros(self.T), np.ones(y.size - self.T)), axis=0)
+
+                if self.compression != 1:
+                    comp_length = np.floor(len(y)/self.compression)
+                    sampler = list(range(0, (comp_length+1) * self.compression, self.compression))
+                    x = x[sampler]
+                    y = y[sampler]
+                    data_val = data_val[sampler]
 
                 if len(x_cat) == 0 and len(y_cat) == 0:
                     x_cat = x

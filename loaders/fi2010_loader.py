@@ -31,6 +31,9 @@ def __get_raw__(auction, normalization, day):
     tmp_path_2 = f"{path1}_{normalization}"
     path2 = f"{tmp_path_1}{tmp_path_2}"
 
+    if normalization == 'Zscore':
+        normalization = 'ZScore'
+
     if day == 1:
         path3 = tmp_path_2 + '_' + 'Training'
         filename = f"Train_Dst_{path1}_{normalization}_CF_{str(day)}.txt"
