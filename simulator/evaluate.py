@@ -42,7 +42,7 @@ def test(model_id, custom_test_days = None):
     model = torch.load(os.path.join(logger.find_save_path(model_id), 'best_val_model.pt'), map_location=device)
 
     new_model = Deeplob(lighten=True)
-    new_model.load_state_dict(model.state_dict(), map_location=device)
+    new_model.load_state_dict(model.state_dict())
     model = new_model
     model.to(device)
 
