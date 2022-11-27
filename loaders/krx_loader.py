@@ -23,11 +23,11 @@ def __split_x_y__(norm_data, proc_data, k, threshold = 0.002):
         l_i = avg_m_j / m_i - 1
 
         if l_i > threshold:
-            y[i] = 1
+            y[i] = 2
         elif l_i < -threshold:
-            y[i] = -1
-        else:
             y[i] = 0
+        else:
+            y[i] = 1
 
     x = norm_data[:len(midprice) - k, :]
     return x, y
@@ -49,7 +49,7 @@ def __data_processing__(x, y, T):
         x_proc[i - T] = x[i - T:i, :]
 
     # y processing
-    y_proc = y[T - 1:N]
+    y_proc = y[T - 1:N] - 1
     return x_proc, y_proc
 
 def __load_normalized_data__(filename):
