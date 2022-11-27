@@ -34,11 +34,11 @@ def __get_raw__(filename, ticker):
                     #      ask       |       bid      #
                     # price |  vol   |  price |  vol  #
                     ###################################
-                    row[3],  row[4],  row[18], row[19], # 1st level
-                    row[6],  row[7],  row[21], row[22], # 2nd level
-                    row[9],  row[10], row[24], row[25], # 3rd level
-                    row[12], row[13], row[27], row[28], # 4th level
-                    row[15], row[16], row[30], row[31]  # 5th level
+                    row[18], row[19], row[3],  row[4],  # 1st level
+                    row[21], row[22], row[6],  row[7],  # 2nd level
+                    row[24], row[25], row[9],  row[10], # 3rd level
+                    row[27], row[28], row[12], row[13], # 4th level
+                    row[30], row[31], row[15], row[16], # 5th level
                 ]
 
                 if len(lob_data) == 0 or temp_lob_data != lob_data[-1]:

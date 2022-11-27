@@ -5,7 +5,7 @@ import torch
 
 from loaders.krx_preprocess import get_normalized_data_list
 
-def __split_x_y__(data, k):
+def __split_x_y__(data, k, threshold = 0.002):
     """
     Extract lob data and annotated label from fi-2010 data
     Parameters
@@ -21,12 +21,12 @@ def __split_x_y__(data, k):
         avg_m_j = np.mean(midprice[i+1:i+k+1])
         l_i = avg_m_j / m_i - 1
 
-        if l_i > 0.002:
-            y[i] = 0
-        elif l_i < -0.002:
-            y[i] = 2
-        else:
+        if l_i > threshold:
             y[i] = 1
+        elif l_i < -threshold:
+            y[i] = -1
+        else:
+            y[i] = 0
 
     x = data[:len(midprice) - k, :]
     return x, y
@@ -48,7 +48,7 @@ def __data_processing__(x, y, T):
         x_proc[i - T] = x[i - T:i, :]
 
     # y processing
-    y_proc = y[T - 1:N] - 1
+    y_proc = y[T - 1:N]
     return x_proc, y_proc
 
 def __load_normalized_data__(filename):
