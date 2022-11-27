@@ -3,9 +3,9 @@ import sys
 import numpy as np
 import torch
 
-from loaders.krx_preprocess import get_normalized_data_list
+from loaders.krx_preprocess import get_normalized_data_list, get_processed_data_list
 
-def __split_x_y__(data, k, threshold = 0.002):
+def __split_x_y__(norm_data, proc_data, k, threshold = 0.002):
     """
     Extract lob data and annotated label from fi-2010 data
     Parameters
@@ -13,7 +13,8 @@ def __split_x_y__(data, k, threshold = 0.002):
     data: Numpy Array
     k: Prediction horizon
     """
-    midprice = (data[:,0] + data[:,2])/2
+
+    midprice = (proc_data[:,0] + proc_data[:,2])/2
     y = np.zeros(len(midprice) - k)
 
     for i in range(len(midprice) - k):
@@ -28,7 +29,7 @@ def __split_x_y__(data, k, threshold = 0.002):
         else:
             y[i] = 0
 
-    x = data[:len(midprice) - k, :]
+    x = norm_[:len(midprice) - k, :]
     return x, y
 
 def __data_processing__(x, y, T):
@@ -57,6 +58,12 @@ def __load_normalized_data__(filename):
     file_path = os.path.join(root_path, dataset_path, 'normalized', filename)
     return np.loadtxt(file_path)
 
+def __load_processed_data__(filename):
+    root_path = sys.path[0]
+    dataset_path = 'krx'
+    file_path = os.path.join(root_path, dataset_path, 'processed', filename)
+    return np.loadtxt(file_path)
+
 class Dataset_krx:
     def __init__(self, normalization, tickers, days, T, k, compression=10):
         """ Initialization """
@@ -77,11 +84,16 @@ class Dataset_krx:
         data_val_cat = np.array([])
 
         for ticker in self.tickers:
-            file_list = get_normalized_data_list(ticker, self.normalization)
-            using_file_list = [file_list[i] for i in self.days]
-            for file in using_file_list:
-                day_data = __load_normalized_data__(file)
-                x, y = __split_x_y__(day_data, self.k)
+            norm_file_list = get_normalized_data_list(ticker, self.normalization)
+            using_norm_file_list = [norm_file_list[i] for i in self.days]
+
+            proc_file_list = get_processed_data_list(ticker)
+            using_proc_file_list = [proc_file_list[i+1] for i in self.days]
+
+            for i in range(len(self.days)):
+                norm_day_data = __load_normalized_data__(using_norm_file_list[i])
+                proc_day_data = __load_processed_data__(using_proc_file_list[i])
+                x, y = __split_x_y__(norm_day_data, proc_day_data, self.k)
                 data_val = np.concatenate((np.zeros(int(self.T * self.compression)), np.ones(y.size - int(self.T * self.compression))), axis=0)
 
                 if self.compression != 1:
@@ -119,10 +131,10 @@ class Dataset_krx:
 
 def __test_label_dist__():
     ticker = 'KQ150'
-    k = 100
+    k = 100000
     T = 100
     normalization = 'Zscore'
-    day = 0
+    day = 5
 
     file_list = get_normalized_data_list(ticker, normalization)
     file = file_list[day]
@@ -130,10 +142,10 @@ def __test_label_dist__():
     day_data = __load_normalized_data__(file)
     x, y = __split_x_y__(day_data, k)
     y = list(y)
+    print(f'%% Day: {day}')
 
-    for i in [0, 1, 2]:
+    for i in [1, 0, -1]:
         print(f'{i}: {y.count(i)}')
-
 
 def __vis_sample_lob__():
     import matplotlib.pyplot as plt
