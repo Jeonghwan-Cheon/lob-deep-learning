@@ -5,7 +5,7 @@ import torch
 
 from loaders.krx_preprocess import get_normalized_data_list, get_processed_data_list
 
-def __split_x_y__(norm_data, proc_data, k, threshold = 0.00002):
+def __split_x_y__(norm_data, proc_data, k, threshold = 0.002/100):
     """
     Extract lob data and annotated label from fi-2010 data
     Parameters
@@ -65,7 +65,7 @@ def __load_processed_data__(filename):
     return np.loadtxt(file_path)
 
 class Dataset_krx:
-    def __init__(self, normalization, tickers, days, T, k, compression=10):
+    def __init__(self, normalization, tickers, days, T, k, compression=1):
         """ Initialization """
         self.normalization = normalization
         self.days = days
