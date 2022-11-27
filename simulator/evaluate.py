@@ -78,7 +78,7 @@ def test(model_id, custom_test_days = None):
 
     all_targets = []
     all_predictions = []
-    all_outputs = []
+    #all_outputs = []
 
     count = 0
     for inputs, targets in tqdm(test_loader):
@@ -96,7 +96,7 @@ def test(model_id, custom_test_days = None):
         # update counts
         all_targets.append(targets.cpu().numpy())
         all_predictions.append(predictions.cpu().numpy())
-        all_outputs.append(max_output.detach().numpy())
+        #all_outputs.append(max_output.detach().numpy())
 
     all_targets = np.concatenate(all_targets)
     all_predictions = np.concatenate(all_predictions)
