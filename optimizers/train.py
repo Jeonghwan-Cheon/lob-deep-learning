@@ -38,9 +38,11 @@ def __get_dataset__(model_id, dataset_type, normalization, lighten, T, k, stock,
     dataset_size = dataset_train_val.__len__()
     train_size = int(dataset_size * 0.8)
     val_size = dataset_size - train_size
-    dataset_train, dataset_val = random_split(dataset_train_val, [train_size, val_size])
+    #dataset_train, dataset_val = random_split(dataset_train_val, [train_size, val_size])
+    #del dataset_train_val
+
+    dataset_train = dataset_train_val
     dataset_val = dataset_test
-    del dataset_train_val
 
     print(f"Training Data Size : {dataset_train.__len__()}")
     print(f"Validation Data Size : {dataset_val.__len__()}")
@@ -86,12 +88,13 @@ def train(model_id, dataset_type, normalization, lighten, T, k, stock, train_tes
     learning_rate = hyperparams['learning_rate']
     epoch = hyperparams['epoch']
     num_workers = hyperparams['num_workers']
+    epsilon = hyperparams['epsilon']
 
     train_loader = DataLoader(dataset=dataset_train, batch_size=batch_size, shuffle=True, num_workers=num_workers)
     val_loader = DataLoader(dataset=dataset_val, batch_size=batch_size, shuffle=False, num_workers=num_workers)
 
     criterion = nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, eps=epsilon)
 
     batch_gd(model_id = model_id, model = model, criterion = criterion, optimizer = optimizer,
              train_loader = train_loader, val_loader = val_loader, epochs=epoch, name = model.name)
