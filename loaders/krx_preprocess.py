@@ -243,5 +243,5 @@ def get_processed_data_list(ticker):
     target_path = os.path.join(root_path, dataset_path, 'processed')
     file_list = [file for file in os.listdir(target_path) if file.startswith(f'{ticker}-')]
     file_list = list(set(file_list))
-    file_list.sort(key = lambda x: (int(x.split('-')[1]), int(x.split('-')[2]), int(x.split('-')[3])))
+    file_list.sort(key = lambda x: (int(x.split('.')[0].split('-')[1]), int(x.split('.')[0].split('-')[2]), int(x.split('.')[0].split('-')[3])))
     return file_list
