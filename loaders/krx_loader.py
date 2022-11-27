@@ -158,32 +158,32 @@ def __vis_sample_lob__():
     import matplotlib.pyplot as plt
 
     ticker = 'KQ150'
-    k = 1000
+    k = 100
     normalization = 'Zscore'
     day = 1
-    idx = 1000
-    compress = 10
+    for idx in range(100):
+        compress = 10
 
-    norm_file_list = get_normalized_data_list(ticker, normalization)
-    using_norm_file = norm_file_list[day]
+        norm_file_list = get_normalized_data_list(ticker, normalization)
+        using_norm_file = norm_file_list[day]
 
-    proc_file_list = get_processed_data_list(ticker)
-    using_proc_file = proc_file_list[day+1]
+        proc_file_list = get_processed_data_list(ticker)
+        using_proc_file = proc_file_list[day+1]
 
-    norm_day_data = __load_normalized_data__(using_norm_file)
-    proc_day_data = __load_processed_data__(using_proc_file)
+        norm_day_data = __load_normalized_data__(using_norm_file)
+        proc_day_data = __load_processed_data__(using_proc_file)
 
-    x, y = __split_x_y__(norm_day_data, proc_day_data, k)
-    sample_shot = np.transpose(x[list(range(0+idx, 100*compress+idx, compress))])
+        x, y = __split_x_y__(norm_day_data, proc_day_data, k)
+        sample_shot = np.transpose(x[list(range(0+idx, 100*compress+idx, compress))])
 
-    image = np.zeros(sample_shot.shape)
-    for i in range(5):
-        image[14 - i , :] = sample_shot[4 * i, :]
-        image[4 - i, :] = sample_shot[4 * i + 1, :]
-        image[15 + i, :] = sample_shot[4 * i + 2, :]
-        image[5 + i, :] = sample_shot[4 * i + 3, :]
+        image = np.zeros(sample_shot.shape)
+        for i in range(5):
+            image[14 - i , :] = sample_shot[4 * i, :]
+            image[4 - i, :] = sample_shot[4 * i + 1, :]
+            image[15 + i, :] = sample_shot[4 * i + 2, :]
+            image[5 + i, :] = sample_shot[4 * i + 3, :]
 
-    plt.imshow(image)
-    plt.title('Sample LOB from KRX dataset')
-    plt.colorbar()
-    plt.show()
+        plt.imshow(image)
+        plt.title('Sample LOB from KRX dataset')
+        plt.colorbar()
+        plt.show()
