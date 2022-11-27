@@ -29,7 +29,7 @@ def __split_x_y__(norm_data, proc_data, k, threshold = 0.002):
         else:
             y[i] = 0
 
-    x = norm_[:len(midprice) - k, :]
+    x = norm_data[:len(midprice) - k, :]
     return x, y
 
 def __data_processing__(x, y, T):
@@ -93,6 +93,7 @@ class Dataset_krx:
             for i in range(len(self.days)):
                 norm_day_data = __load_normalized_data__(using_norm_file_list[i])
                 proc_day_data = __load_processed_data__(using_proc_file_list[i])
+                print(using_norm_file_list[i], using_proc_file_list[i], norm_day_data.shape, proc_day_data.shape)
                 x, y = __split_x_y__(norm_day_data, proc_day_data, self.k)
                 data_val = np.concatenate((np.zeros(int(self.T * self.compression)), np.ones(y.size - int(self.T * self.compression))), axis=0)
 
