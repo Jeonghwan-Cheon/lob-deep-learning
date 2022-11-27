@@ -15,12 +15,14 @@ def __split_x_y__(norm_data, proc_data, k, threshold = 0.002/100):
     """
 
     midprice = (proc_data[:,0] + proc_data[:,2])/2
-    y = np.zeros(len(midprice) - k)
+    y = np.zeros(len(midprice) - 2 * k)
 
-    for i in range(len(midprice) - k):
-        m_i = midprice[i]
-        avg_m_j = np.mean(midprice[i+1:i+k+1])
-        l_i = avg_m_j / m_i - 1
+    for i in range(len(midprice) - 2 * k):
+        # m_i = midprice[i]
+        idx = i + k
+        m_p = np.mean(midprice[idx + 1:idx + k + 1])
+        m_m = np.mean(midprice[idx - k - 1:idx - 1])
+        l_i = m_p / m_m - 1
 
         if l_i > threshold:
             y[i] = 2
@@ -29,7 +31,7 @@ def __split_x_y__(norm_data, proc_data, k, threshold = 0.002/100):
         else:
             y[i] = 1
 
-    x = norm_data[:len(midprice) - k, :]
+    x = norm_data[k:len(midprice) - k, :]
     return x, y
 
 def __data_processing__(x, y, T):
@@ -65,7 +67,7 @@ def __load_processed_data__(filename):
     return np.loadtxt(file_path)
 
 class Dataset_krx:
-    def __init__(self, normalization, tickers, days, T, k, compression=1):
+    def __init__(self, normalization, tickers, days, T, k, compression=10):
         """ Initialization """
         self.normalization = normalization
         self.days = days
@@ -93,7 +95,6 @@ class Dataset_krx:
             for i in range(len(self.days)):
                 norm_day_data = __load_normalized_data__(using_norm_file_list[i])
                 proc_day_data = __load_processed_data__(using_proc_file_list[i])
-                print(using_norm_file_list[i], using_proc_file_list[i], norm_day_data.shape, proc_day_data.shape)
                 x, y = __split_x_y__(norm_day_data, proc_day_data, self.k)
                 data_val = np.concatenate((np.zeros(int(self.T * self.compression)), np.ones(y.size - int(self.T * self.compression))), axis=0)
 
@@ -134,24 +135,24 @@ def __test_label_dist__():
     ticker = 'KQ150'
     k = 100
     normalization = 'Zscore'
-    day = 2
-    compress = 10
+    for day in range(6):
+        compress = 10
 
-    norm_file_list = get_normalized_data_list(ticker, normalization)
-    using_norm_file = norm_file_list[day]
+        norm_file_list = get_normalized_data_list(ticker, normalization)
+        using_norm_file = norm_file_list[day]
 
-    proc_file_list = get_processed_data_list(ticker)
-    using_proc_file = proc_file_list[day + 1]
+        proc_file_list = get_processed_data_list(ticker)
+        using_proc_file = proc_file_list[day + 1]
 
-    norm_day_data = __load_normalized_data__(using_norm_file)
-    proc_day_data = __load_processed_data__(using_proc_file)
+        norm_day_data = __load_normalized_data__(using_norm_file)
+        proc_day_data = __load_processed_data__(using_proc_file)
 
-    x, y = __split_x_y__(norm_day_data, proc_day_data, k)
-    y = list(y)
-    print(f'%% Day: {day}')
+        x, y = __split_x_y__(norm_day_data, proc_day_data, k)
+        y = list(y)
+        print(f'%% Day: {day}')
 
-    for i in [0, 1, 2]:
-        print(f'{i}: {y.count(i)}')
+        for i in [0, 1, 2]:
+            print(f'{i}: {y.count(i)}')
 
 def __vis_sample_lob__():
     import matplotlib.pyplot as plt
