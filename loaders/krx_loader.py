@@ -5,7 +5,7 @@ import torch
 
 from loaders.krx_preprocess import get_normalized_data_list, get_processed_data_list
 
-def __split_x_y__(norm_data, proc_data, k, threshold = 0.002):
+def __split_x_y__(norm_data, proc_data, k, threshold = 0.00002):
     """
     Extract lob data and annotated label from fi-2010 data
     Parameters
@@ -132,37 +132,47 @@ class Dataset_krx:
 
 def __test_label_dist__():
     ticker = 'KQ150'
-    k = 100000
-    T = 100
+    k = 100
     normalization = 'Zscore'
-    day = 5
+    day = 2
+    compress = 10
 
-    file_list = get_normalized_data_list(ticker, normalization)
-    file = file_list[day]
+    norm_file_list = get_normalized_data_list(ticker, normalization)
+    using_norm_file = norm_file_list[day]
 
-    day_data = __load_normalized_data__(file)
-    x, y = __split_x_y__(day_data, k)
+    proc_file_list = get_processed_data_list(ticker)
+    using_proc_file = proc_file_list[day + 1]
+
+    norm_day_data = __load_normalized_data__(using_norm_file)
+    proc_day_data = __load_processed_data__(using_proc_file)
+
+    x, y = __split_x_y__(norm_day_data, proc_day_data, k)
     y = list(y)
     print(f'%% Day: {day}')
 
-    for i in [1, 0, -1]:
+    for i in [0, 1, 2]:
         print(f'{i}: {y.count(i)}')
 
 def __vis_sample_lob__():
     import matplotlib.pyplot as plt
 
     ticker = 'KQ150'
-    k = 100
+    k = 1000
     normalization = 'Zscore'
     day = 1
     idx = 1000
     compress = 10
 
-    file_list = get_normalized_data_list(ticker, normalization)
-    file = file_list[day]
+    norm_file_list = get_normalized_data_list(ticker, normalization)
+    using_norm_file = norm_file_list[day]
 
-    day_data = __load_normalized_data__(file)
-    x, y = __split_x_y__(day_data, k)
+    proc_file_list = get_processed_data_list(ticker)
+    using_proc_file = proc_file_list[day+1]
+
+    norm_day_data = __load_normalized_data__(using_norm_file)
+    proc_day_data = __load_processed_data__(using_proc_file)
+
+    x, y = __split_x_y__(norm_day_data, proc_day_data, k)
     sample_shot = np.transpose(x[list(range(0+idx, 100*compress+idx, compress))])
 
     image = np.zeros(sample_shot.shape)
