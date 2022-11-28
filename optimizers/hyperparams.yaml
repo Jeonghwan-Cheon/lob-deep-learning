@@ -9,7 +9,7 @@ deeplob-lighten:
   batch_size: 32
   learning_rate: 0.01
   epsilon: 1e-08
-  epoch: 100
+  epoch: 20
   num_workers: 4
 
 lobster:

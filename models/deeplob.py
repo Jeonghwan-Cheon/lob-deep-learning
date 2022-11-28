@@ -76,7 +76,6 @@ class Deeplob(nn.Module):
 
         # lstm layers
         self.lstm = nn.LSTM(input_size=192, hidden_size=64, num_layers=1, batch_first=True)
-        self.dropout = nn.Dropout(0.2)
         self.fc1 = nn.Linear(64, 3)
 
     def forward(self, x):
@@ -95,7 +94,6 @@ class Deeplob(nn.Module):
 
         x = x.permute(0, 2, 1, 3)
         x = torch.reshape(x, (-1, x.shape[1], x.shape[2]))
-        x = self.dropout(x)
 
         x, _ = self.lstm(x, (h0, c0))
         x = x[:, -1, :]

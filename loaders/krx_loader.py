@@ -67,7 +67,7 @@ def __load_processed_data__(filename):
     return np.loadtxt(file_path)
 
 class Dataset_krx:
-    def __init__(self, normalization, tickers, days, T, k, compression=10):
+    def __init__(self, normalization, tickers, days, T, k, compression=20):
         """ Initialization """
         self.normalization = normalization
         self.days = days
@@ -133,10 +133,10 @@ class Dataset_krx:
 
 def __test_label_dist__():
     ticker = 'KQ150'
-    k = 100
+    k = 200
     normalization = 'Zscore'
+
     for day in range(6):
-        compress = 10
 
         norm_file_list = get_normalized_data_list(ticker, normalization)
         using_norm_file = norm_file_list[day]
@@ -148,6 +148,7 @@ def __test_label_dist__():
         proc_day_data = __load_processed_data__(using_proc_file)
 
         x, y = __split_x_y__(norm_day_data, proc_day_data, k)
+
         y = list(y)
         print(f'%% Day: {day}')
 
