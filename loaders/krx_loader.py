@@ -31,6 +31,8 @@ def __split_x_y__(norm_data, proc_data, k, threshold = 0.002/100):
         else:
             y[i] = 1
 
+        print(y[i])
+
     x = norm_data[k:len(midprice) - k, :]
     return x, y
 
