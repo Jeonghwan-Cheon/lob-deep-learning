@@ -80,7 +80,7 @@ def processing(norm, proc, k, T, compression):
 
     if compression != 1:
         comp_length = np.floor(len(y) / compression)
-        sampler = list(range(0, int(comp_length * compression), compression))
+        sampler = list(range(0, int(comp_length * compression - 1), compression))
         x = x[sampler]
         y = y[sampler]
         data_val = data_val[sampler]
