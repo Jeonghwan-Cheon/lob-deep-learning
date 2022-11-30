@@ -3,6 +3,7 @@ import sys
 import csv
 import fnmatch
 import numpy as np
+from multiprocessing import Pool
 
 
 def __get_raw__(filename, ticker):
@@ -52,6 +53,7 @@ def __get_raw__(filename, ticker):
 
     return lob_data.astype(np.uint32)
 
+
 def __single_day_data__(year, month, day, ticker):
     """
     Collect LOB data collected in a single day
@@ -78,16 +80,14 @@ def __single_day_data__(year, month, day, ticker):
 
     lob_data_cat = np.array([])
 
-    for file in day_file:
-        filename = os.path.join(path1, file)
-        lob_data_piece = __get_raw__(filename, ticker)
+    def get_filename(f):
+        return os.path.join(path1, file)
 
-        if len(lob_data_cat) == 0:
-            lob_data_cat = lob_data_piece
-        else:
-            lob_data_cat = np.concatenate((lob_data_cat, lob_data_piece), axis=0)
+    with Pool() as pool:
+        input_files = [(get_filename(file), ticker) for file in day_file]
+        lob_data = pool.starmap(__get_raw__, input_files)
+        return np.concatenate(lob_data)[1:-1, :]
 
-    return lob_data_cat[1:-1,:]
 
 def __save_preprocessed_data__():
     root_path = sys.path[0]
@@ -138,7 +138,27 @@ def __get_day_list__():
     file_list.sort(key = lambda x: (int(x.split('-')[0]), int(x.split('-')[1]), int(x.split('-')[2])))
     return file_list
 
-def __normalize_data__(ticker, normalization):
+
+def __get_norm_info__(path, day, ticker) -> (np.array, np.array):
+    filename = f'{ticker}-{day}.txt'
+    tmp_path = os.path.join(path, filename)
+    data = np.loadtxt(tmp_path)
+    price_data = data[:, list(range(0, 20, 2))].flatten()
+    volume_data = data[:, list(range(1, 20, 2))].flatten()
+
+    info_price = np.array([len(data),
+                        np.mean(price_data), np.std(price_data),
+                        np.min(price_data), np.max(price_data),
+                        len(str(round(np.max(price_data))))])
+    info_volume = np.array([len(data),
+                        np.mean(volume_data), np.std(volume_data),
+                        np.min(volume_data), np.max(volume_data),
+                        len(str(round(np.max(volume_data))))])
+
+    return info_price, info_volume
+
+
+def __normalize_data__(ticker, normalization, period=5):
     root_path = sys.path[0]
     dataset_path = 'krx'
     source_path = os.path.join(root_path, dataset_path, 'processed')
@@ -147,28 +167,19 @@ def __normalize_data__(ticker, normalization):
     if not os.path.exists(target_path):
         os.makedirs(target_path)
 
-    period = 1
     day_list = __get_day_list__()
+
+    pool = Pool()
+    input_list = [(source_path, day, ticker) for day in day_list]
+    result = pool.starmap(__get_norm_info__, input_list)
 
     # index: N, mean, std, min, max, k
     norm_info_price = np.zeros((len(day_list), 6))
     norm_info_volume = np.zeros((len(day_list), 6))
 
-    for idx, day in enumerate(day_list):
-        filename = f'{ticker}-{day}.txt'
-        tmp_path = os.path.join(source_path, filename)
-        data = np.loadtxt(tmp_path)
-        price_data = data[:,list(range(0, 20, 2))].flatten()
-        volume_data = data[:,list(range(1, 20, 2))].flatten()
-
-        norm_info_price[idx, :] = np.array([len(data),
-                                            np.mean(price_data), np.std(price_data),
-                                            np.min(price_data), np.max(price_data),
-                                            len(str(round(np.max(price_data))))])
-        norm_info_volume[idx, :] = np.array([len(data),
-                                            np.mean(volume_data), np.std(volume_data),
-                                            np.min(volume_data), np.max(volume_data),
-                                            len(str(round(np.max(volume_data))))])
+    for idx, (price, volume) in enumerate(result):
+        norm_info_price[idx, :] = price
+        norm_info_volume[idx, :] = volume
 
     for idx, day in enumerate(day_list):
         if idx+1 > period:
@@ -225,6 +236,7 @@ def __normalize_data__(ticker, normalization):
 
                 np.savetxt(tmp_target_path, normalized_data, fmt='%.7e')
                 print(f"{target_filename} saved")
+
 
 def get_normalized_data_list(ticker, normalization):
     __normalize_data__(ticker, normalization)

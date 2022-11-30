@@ -1,3 +1,4 @@
+import multiprocessing
 import os
 import sys
 import numpy as np
@@ -5,7 +6,8 @@ import torch
 
 from loaders.krx_preprocess import get_normalized_data_list, get_processed_data_list
 
-def __split_x_y__(norm_data, proc_data, k, threshold = 0.002/100):
+
+def __split_x_y__(norm_data, proc_data, k, threshold=0.002 / 100):
     """
     Extract lob data and annotated label from fi-2010 data
     Parameters
@@ -14,7 +16,7 @@ def __split_x_y__(norm_data, proc_data, k, threshold = 0.002/100):
     k: Prediction horizon
     """
 
-    midprice = (proc_data[:,0] + proc_data[:,2])/2
+    midprice = (proc_data[:, 0] + proc_data[:, 2]) / 2
     y = np.zeros(len(midprice) - 2 * k)
 
     for i in range(len(midprice) - 2 * k):
@@ -33,6 +35,7 @@ def __split_x_y__(norm_data, proc_data, k, threshold = 0.002/100):
 
     x = norm_data[k:len(midprice) - k, :]
     return x, y
+
 
 def __data_processing__(x, y, T):
     """
@@ -54,11 +57,13 @@ def __data_processing__(x, y, T):
     y_proc = y[T - 1:N] - 1
     return x_proc, y_proc
 
+
 def __load_normalized_data__(filename):
     root_path = sys.path[0]
     dataset_path = 'krx'
     file_path = os.path.join(root_path, dataset_path, 'normalized', filename)
     return np.loadtxt(file_path)
+
 
 def __load_processed_data__(filename):
     root_path = sys.path[0]
@@ -66,8 +71,26 @@ def __load_processed_data__(filename):
     file_path = os.path.join(root_path, dataset_path, 'processed', filename)
     return np.loadtxt(file_path)
 
+
+def processing(norm, proc, k, T, compression):
+    norm_day_data = __load_normalized_data__(norm)
+    proc_day_data = __load_processed_data__(proc)
+
+    x, y = __split_x_y__(norm_day_data, proc_day_data, k)
+    data_val = np.concatenate((np.zeros(int(T * compression)), np.ones(y.size - int(T * compression))), axis=0)
+
+    if compression != 1:
+        comp_length = np.floor(len(y) / compression)
+        sampler = list(range(0, int(comp_length * compression), compression))
+        x = x[sampler]
+        y = y[sampler]
+        data_val = data_val[sampler]
+
+    return x, y, data_val
+
+
 class Dataset_krx:
-    def __init__(self, normalization, tickers, days, T, k, compression=20):
+    def __init__(self, normalization, tickers, days, T, k, compression=10):
         """ Initialization """
         self.normalization = normalization
         self.days = days
@@ -90,21 +113,14 @@ class Dataset_krx:
             using_norm_file_list = [norm_file_list[i] for i in self.days]
 
             proc_file_list = get_processed_data_list(ticker)
-            using_proc_file_list = [proc_file_list[i+1] for i in self.days]
+            using_proc_file_list = [proc_file_list[i + 1] for i in self.days]
 
-            for i in range(len(self.days)):
-                norm_day_data = __load_normalized_data__(using_norm_file_list[i])
-                proc_day_data = __load_processed_data__(using_proc_file_list[i])
-                x, y = __split_x_y__(norm_day_data, proc_day_data, self.k)
-                data_val = np.concatenate((np.zeros(int(self.T * self.compression)), np.ones(y.size - int(self.T * self.compression))), axis=0)
+            pool = multiprocessing.Pool()
+            input_files = [(using_norm_file_list[i], using_proc_file_list[i], self.k, self.T, self.compression) for i in
+                           range(len(self.days))]
+            result = pool.starmap(processing, input_files)
 
-                if self.compression != 1:
-                    comp_length = np.floor(len(y)/self.compression)
-                    sampler = list(range(0, int(comp_length * self.compression), self.compression))
-                    x = x[sampler]
-                    y = y[sampler]
-                    data_val = data_val[sampler]
-
+            for x, y, data_val in result:
                 if len(x_cat) == 0 and len(y_cat) == 0:
                     x_cat = x
                     y_cat = y
@@ -123,7 +139,7 @@ class Dataset_krx:
     def __getitem__(self, index):
         """Generates samples of data"""
         raw_index = self.val[index]
-        x_data = self.x[raw_index-self.T:raw_index, :]
+        x_data = self.x[raw_index - self.T:raw_index, :]
         y_data = self.y[raw_index]
 
         x_data = np.expand_dims(x_data, axis=0)
@@ -131,12 +147,13 @@ class Dataset_krx:
         y_data = torch.tensor(y_data)
         return x_data, y_data
 
+
 def __test_label_dist__():
     ticker = 'KQ150'
-    k = 30000
+    k = 100
     normalization = 'Zscore'
-
     for day in range(6):
+        compress = 10
 
         norm_file_list = get_normalized_data_list(ticker, normalization)
         using_norm_file = norm_file_list[day]
@@ -148,12 +165,12 @@ def __test_label_dist__():
         proc_day_data = __load_processed_data__(using_proc_file)
 
         x, y = __split_x_y__(norm_day_data, proc_day_data, k)
-
         y = list(y)
         print(f'%% Day: {day}')
 
         for i in [0, 1, 2]:
             print(f'{i}: {y.count(i)}')
+
 
 def __vis_sample_lob__():
     import matplotlib.pyplot as plt
@@ -169,17 +186,17 @@ def __vis_sample_lob__():
         using_norm_file = norm_file_list[day]
 
         proc_file_list = get_processed_data_list(ticker)
-        using_proc_file = proc_file_list[day+1]
+        using_proc_file = proc_file_list[day + 1]
 
         norm_day_data = __load_normalized_data__(using_norm_file)
         proc_day_data = __load_processed_data__(using_proc_file)
 
         x, y = __split_x_y__(norm_day_data, proc_day_data, k)
-        sample_shot = np.transpose(x[list(range(0+idx, 100*compress+idx, compress))])
+        sample_shot = np.transpose(x[list(range(0 + idx, 100 * compress + idx, compress))])
 
         image = np.zeros(sample_shot.shape)
         for i in range(5):
-            image[14 - i , :] = sample_shot[4 * i, :]
+            image[14 - i, :] = sample_shot[4 * i, :]
             image[4 - i, :] = sample_shot[4 * i + 1, :]
             image[15 + i, :] = sample_shot[4 * i + 2, :]
             image[5 + i, :] = sample_shot[4 * i + 3, :]
