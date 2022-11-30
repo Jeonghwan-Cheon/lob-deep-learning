@@ -58,7 +58,7 @@ def test(model_id, custom_test_days = None):
     normalization = 'Zscore'
     lighten = True
     T = 100
-    k = 1000
+    k = 100
     stock = ['KQ150']
 
     # if custom_test_days == None:
@@ -66,7 +66,7 @@ def test(model_id, custom_test_days = None):
     # else:
     #     test_days = custom_test_days
 
-    test_days = [5, 6]
+    test_days = [3, 4]
 
     dataset_test = __get_dataset__(model_id, dataset_type, normalization, lighten, T, k, stock, test_days)
 
