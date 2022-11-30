@@ -17,14 +17,13 @@ def __split_x_y__(norm_data, proc_data, k, threshold=0.002 / 100):
     """
 
     midprice = (proc_data[:, 0] + proc_data[:, 2]) / 2
-    y = np.zeros(len(midprice) - 2 * k)
+    y = np.zeros(len(midprice) - k)
 
-    for i in range(len(midprice) - 2 * k):
-        # m_i = midprice[i]
-        idx = i + k
-        m_p = np.mean(midprice[idx + 1:idx + k + 1])
-        m_m = np.mean(midprice[idx - k - 1:idx - 1])
-        l_i = m_p / m_m - 1
+    for i in range(len(midprice) - k):
+        m_i = midprice[i]
+        m_p = np.mean(midprice[i + 1:i + k + 1])
+        #m_m = np.mean(midprice[idx - k - 1:idx - 1])
+        l_i = m_p / m_i - 1
 
         if l_i > threshold:
             y[i] = 2
@@ -80,7 +79,7 @@ def processing(norm, proc, k, T, compression):
     data_val = np.concatenate((np.zeros(int(T * compression)), np.ones(y.size - int(T * compression))), axis=0)
 
     if compression != 1:
-        comp_length = np.floor(len(y) / compression) - 1
+        comp_length = np.floor(len(y) / compression)
         sampler = list(range(0, int(comp_length * compression), compression))
         x = x[sampler]
         y = y[sampler]
