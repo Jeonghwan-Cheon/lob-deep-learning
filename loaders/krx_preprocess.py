@@ -6,7 +6,7 @@ import numpy as np
 from multiprocessing import Pool
 
 
-def __get_raw__(filename, ticker, compression = 60):
+def __get_raw__(filename, ticker, compression = 10):
     """
     Handling function for loading raw krx dataset
     Parameters

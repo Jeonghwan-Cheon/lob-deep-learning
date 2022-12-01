@@ -7,7 +7,7 @@ import torch
 from loaders.krx_preprocess import get_normalized_data_list, get_processed_data_list
 
 
-def __split_x_y__(norm_data, proc_data, k, threshold=0.005/100):
+def __split_x_y__(norm_data, proc_data, k, threshold=0.002/100):
     """
     Extract lob data and annotated label from fi-2010 data
     Parameters
@@ -141,7 +141,7 @@ class Dataset_krx:
 
 def __test_label_dist__():
     ticker = 'KQ150'
-    k = 100
+    k = 5
     normalization = 'Zscore'
     for day in range(9):
         norm_file_list = get_normalized_data_list(ticker, normalization)
