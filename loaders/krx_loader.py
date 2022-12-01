@@ -22,8 +22,8 @@ def __split_x_y__(norm_data, proc_data, k, threshold=0.005/100):
     for i in range(len(midprice) - 2*k):
         m_i = midprice[i+k]
         m_p = np.mean(midprice[i + k + 1:i + 2 * k])
-        m_m = np.mean(midprice[i:i + k - 1])
-        l_i = m_p / m_m - 1
+        #m_m = np.mean(midprice[i:i + k - 1])
+        l_i = m_p / m_i - 1
 
         if l_i > threshold:
             y[i] = 2
@@ -143,7 +143,7 @@ def __test_label_dist__():
     ticker = 'KQ150'
     k = 100
     normalization = 'Zscore'
-    for day in range(10):
+    for day in range(9):
         norm_file_list = get_normalized_data_list(ticker, normalization)
         using_norm_file = norm_file_list[day]
 
