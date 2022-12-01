@@ -6,7 +6,7 @@ import numpy as np
 from multiprocessing import Pool
 
 
-def __get_raw__(filename, ticker):
+def __get_raw__(filename, ticker, compression = 100):
     """
     Handling function for loading raw krx dataset
     Parameters
@@ -28,6 +28,7 @@ def __get_raw__(filename, ticker):
 
     with open(file_path, 'r', encoding='utf-8') as csvfile:
         reader = csv.reader(csvfile)
+        comp_count = 0
         for idx, row in enumerate(reader):
             if idx > 0 and row[1] == code:
                 temp_lob_data = [
@@ -42,8 +43,11 @@ def __get_raw__(filename, ticker):
                     row[30], row[31], row[15], row[16], # 5th level
                 ]
 
-                if len(lob_data) == 0 or temp_lob_data != lob_data[-1]:
-                    lob_data.append(temp_lob_data) # avoid duplicated data
+                if len(lob_data) == 0 or temp_lob_data != lob_data[-1]: # avoid duplicated data
+                    comp_count= comp_count + 1
+                    if comp_count == compression:
+                        lob_data.append(temp_lob_data)
+                        comp_count = 0
 
     lob_data = np.array(lob_data).astype(np.float64)
     if ticker == "KS200":
@@ -158,7 +162,7 @@ def __get_norm_info__(path, day, ticker) -> (np.array, np.array):
     return info_price, info_volume
 
 
-def __normalize_data__(ticker, normalization, period=5):
+def __normalize_data__(ticker, normalization, period=1):
     root_path = sys.path[0]
     dataset_path = 'krx'
     source_path = os.path.join(root_path, dataset_path, 'processed')

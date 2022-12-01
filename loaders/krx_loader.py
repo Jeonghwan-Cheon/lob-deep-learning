@@ -7,7 +7,7 @@ import torch
 from loaders.krx_preprocess import get_normalized_data_list, get_processed_data_list
 
 
-def __split_x_y__(norm_data, proc_data, k, threshold=0.002 / 100):
+def __split_x_y__(norm_data, proc_data, k, threshold=0.002/100):
     """
     Extract lob data and annotated label from fi-2010 data
     Parameters
@@ -17,13 +17,13 @@ def __split_x_y__(norm_data, proc_data, k, threshold=0.002 / 100):
     """
 
     midprice = (proc_data[:, 0] + proc_data[:, 2]) / 2
-    y = np.zeros(len(midprice) - k)
+    y = np.zeros(len(midprice) - 2*k)
 
-    for i in range(len(midprice) - k):
-        m_i = midprice[i]
-        m_p = np.mean(midprice[i + 1:i + k + 1])
-        #m_m = np.mean(midprice[idx - k - 1:idx - 1])
-        l_i = m_p / m_i - 1
+    for i in range(len(midprice) - 2*k):
+        m_i = midprice[i+k]
+        m_p = np.mean(midprice[i + k + 1:i + 2 * k])
+        m_m = np.mean(midprice[i:i + k - 1])
+        l_i = m_p / m_m - 1
 
         if l_i > threshold:
             y[i] = 2
@@ -32,7 +32,7 @@ def __split_x_y__(norm_data, proc_data, k, threshold=0.002 / 100):
         else:
             y[i] = 1
 
-    x = norm_data[k:len(midprice) - k, :]
+    x = norm_data[:len(midprice) - k, :]
     return x, y
 
 
@@ -71,32 +71,24 @@ def __load_processed_data__(filename):
     return np.loadtxt(file_path)
 
 
-def processing(norm, proc, k, T, compression):
+def processing(norm, proc, k, T):
     norm_day_data = __load_normalized_data__(norm)
     proc_day_data = __load_processed_data__(proc)
 
     x, y = __split_x_y__(norm_day_data, proc_day_data, k)
-    data_val = np.concatenate((np.zeros(int(T * compression)), np.ones(y.size - int(T * compression))), axis=0)
-
-    if compression != 1:
-        comp_length = np.floor(len(y) / compression)
-        sampler = list(range(0, int(comp_length * compression - 1), compression))
-        x = x[sampler]
-        y = y[sampler]
-        data_val = data_val[sampler]
+    data_val = np.concatenate((np.zeros(T), np.ones(y.size - T)), axis=0)
 
     return x, y, data_val
 
 
 class Dataset_krx:
-    def __init__(self, normalization, tickers, days, T, k, compression=10):
+    def __init__(self, normalization, tickers, days, T, k):
         """ Initialization """
         self.normalization = normalization
         self.days = days
         self.tickers = tickers
         self.T = T
         self.k = k
-        self.compression = compression
 
         self.x, self.y, self.data_val = self.__init_dataset__()
         self.length = np.count_nonzero(self.data_val)
@@ -115,7 +107,7 @@ class Dataset_krx:
             using_proc_file_list = [proc_file_list[i + 1] for i in self.days]
 
             pool = multiprocessing.Pool()
-            input_files = [(using_norm_file_list[i], using_proc_file_list[i], self.k, self.T, self.compression) for i in
+            input_files = [(using_norm_file_list[i], using_proc_file_list[i], self.k, self.T) for i in
                            range(len(self.days))]
             result = pool.starmap(processing, input_files)
 
@@ -152,8 +144,6 @@ def __test_label_dist__():
     k = 100
     normalization = 'Zscore'
     for day in range(6):
-        compress = 10
-
         norm_file_list = get_normalized_data_list(ticker, normalization)
         using_norm_file = norm_file_list[day]
 
