@@ -78,6 +78,7 @@ def test(model_id, custom_test_days = None):
 
     all_targets = []
     all_predictions = []
+    all_midprices = []
     #all_outputs = []
 
     count = 0
@@ -98,13 +99,21 @@ def test(model_id, custom_test_days = None):
         all_predictions.append(predictions.cpu().numpy())
         #all_outputs.append(max_output.detach().numpy())
 
+        # calculate midprice
+        x = inputs.cpu().numpy()
+        ask_price = x[:, -1, 0]
+        bid_price = x[:, -1, 2]
+        temp_midprice = ask_price + bid_price
+        all_midprices.append(temp_midprice)
+
     all_targets = np.concatenate(all_targets)
     all_predictions = np.concatenate(all_predictions)
+    all_midprices = np.concatenate(all_midprices)
 
     test_acc = accuracy_score(all_targets, all_predictions)
 
     with open(os.path.join(logger.find_save_path(model_id), 'prediction.pkl'), 'wb') as f:
-        pickle.dump([all_targets, all_predictions], f)
+        pickle.dump([all_targets, all_predictions, all_midprices], f)
 
     print(f"Test acc: {test_acc:.4f}")
     print(classification_report(all_targets, all_predictions, digits=4))
