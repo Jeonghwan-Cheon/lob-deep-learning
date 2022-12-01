@@ -58,7 +58,7 @@ def test(model_id, custom_test_days = None):
     normalization = 'Zscore'
     lighten = True
     T = 100
-    k = 100
+    k = 10
     stock = ['KQ150']
 
     # if custom_test_days == None:
