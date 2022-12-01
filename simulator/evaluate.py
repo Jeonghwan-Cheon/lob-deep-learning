@@ -7,7 +7,7 @@ import pickle
 from tqdm import tqdm
 from torch import nn
 from torch.utils.data import DataLoader
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
 from loaders.fi2010_loader import Dataset_fi2010
 from loaders.krx_preprocess import get_normalized_data_list
@@ -66,7 +66,7 @@ def test(model_id, custom_test_days = None):
     # else:
     #     test_days = custom_test_days
 
-    test_days = [7, 8, 9]
+    test_days = [6, 7, 8]
 
     dataset_test = __get_dataset__(model_id, dataset_type, normalization, lighten, T, k, stock, test_days)
 
@@ -108,5 +108,6 @@ def test(model_id, custom_test_days = None):
 
     print(f"Test acc: {test_acc:.4f}")
     print(classification_report(all_targets, all_predictions, digits=4))
+    print(confusion_matrix(all_targets, all_predictions))
 
     return
