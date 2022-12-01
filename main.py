@@ -6,7 +6,6 @@ from loaders.krx_loader import __test_label_dist__, __vis_sample_lob__
 
 
 if __name__ == '__main__':
-    __test_label_dist__()
     model_id = logger.generate_id('deeplob-lighten')
     train.train(
         model_id=model_id, dataset_type = 'krx', normalization= 'Zscore', lighten= True,
