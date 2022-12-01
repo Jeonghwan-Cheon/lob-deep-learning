@@ -76,10 +76,10 @@ def test(model_id, custom_test_days = None):
 
     test_loader = DataLoader(dataset=dataset_test, batch_size=batch_size, shuffle=False, num_workers=num_workers)
 
+    all_midprices = []
     all_targets = []
     all_predictions = []
-    all_midprices = []
-    #all_outputs = []
+    all_outputs = []
 
     count = 0
     for inputs, targets in tqdm(test_loader):
@@ -97,7 +97,7 @@ def test(model_id, custom_test_days = None):
         # update counts
         all_targets.append(targets.cpu().numpy())
         all_predictions.append(predictions.cpu().numpy())
-        #all_outputs.append(max_output.detach().numpy())
+        all_outputs.append(max_output.detach().numpy())
 
         # calculate midprice
         x = inputs.cpu().numpy()
@@ -106,14 +106,15 @@ def test(model_id, custom_test_days = None):
         temp_midprice = ask_price + bid_price
         all_midprices.append(temp_midprice)
 
+    all_midprices = np.concatenate(all_midprices)
     all_targets = np.concatenate(all_targets)
     all_predictions = np.concatenate(all_predictions)
-    all_midprices = np.concatenate(all_midprices)
+    all_outputs = np.concatenate(all_outputs)
 
     test_acc = accuracy_score(all_targets, all_predictions)
 
     with open(os.path.join(logger.find_save_path(model_id), 'prediction.pkl'), 'wb') as f:
-        pickle.dump([all_targets, all_predictions, all_midprices], f)
+        pickle.dump([all_midprices, all_targets, all_predictions, all_outputs], f)
 
     print(f"Test acc: {test_acc:.4f}")
     print(classification_report(all_targets, all_predictions, digits=4))
