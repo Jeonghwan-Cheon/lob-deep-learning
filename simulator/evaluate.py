@@ -76,7 +76,7 @@ def test(model_id, custom_test_days = None):
 
     test_loader = DataLoader(dataset=dataset_test, batch_size=batch_size, shuffle=False, num_workers=num_workers)
 
-    all_midprices = []
+    all_midprices = dataset_test.get_midprice()
     all_targets = []
     all_predictions = []
     #all_outputs = []
@@ -98,13 +98,6 @@ def test(model_id, custom_test_days = None):
         all_targets.append(targets.cpu().numpy())
         all_predictions.append(predictions.cpu().numpy())
         #all_outputs.append(max_output.cpu().numpy())
-
-        # calculate midprice
-        x = inputs.cpu().numpy()
-        ask_price = x[:, -1, 0]
-        bid_price = x[:, -1, 2]
-        temp_midprice = ask_price + bid_price
-        all_midprices.append(temp_midprice)
 
     all_midprices = np.concatenate(all_midprices)
     all_targets = np.concatenate(all_targets)

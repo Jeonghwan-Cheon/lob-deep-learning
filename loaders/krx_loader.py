@@ -35,23 +35,23 @@ def __split_x_y__(norm_data, proc_data, k, threshold=0.05/100):
 
     midprice = midprice[k:len(midprice) - k]
 
-    plt.subplots()
-    plt.plot(midprice)
-    for i in range(len(midprice)):
-        if y[i]==1:
-            pass
-        else:
-            if y[i] == 2:
-                color='red'
-            elif y[i] == 0:
-                color='blue'
-            plt.axvspan(i-0.5, i+0.5, color=color, alpha=0.5)
-
-    plt.show()
+    # plt.subplots()
+    # plt.plot(midprice)
+    # for i in range(len(midprice)):
+    #     if y[i]==1:
+    #         pass
+    #     else:
+    #         if y[i] == 2:
+    #             color='red'
+    #         elif y[i] == 0:
+    #             color='blue'
+    #         plt.axvspan(i-0.5, i+0.5, color=color, alpha=0.5)
+    #
+    # plt.show()
 
 
     x = norm_data[:len(midprice) - k, :]
-    return x, y
+    return x, y, midprice
 
 
 def __load_normalized_data__(filename):
@@ -72,10 +72,10 @@ def processing(norm, proc, k, T):
     norm_day_data = __load_normalized_data__(norm)
     proc_day_data = __load_processed_data__(proc)
 
-    x, y = __split_x_y__(norm_day_data, proc_day_data, k)
+    x, y, midprice = __split_x_y__(norm_day_data, proc_day_data, k)
     data_val = np.concatenate((np.zeros(T), np.ones(y.size - T)), axis=0)
 
-    return x, y, data_val
+    return x, y, midprice, data_val
 
 
 class Dataset_krx:
@@ -87,7 +87,7 @@ class Dataset_krx:
         self.T = T
         self.k = k
 
-        self.x, self.y, self.data_val = self.__init_dataset__()
+        self.x, self.y, self.midprice, self.data_val = self.__init_dataset__()
         self.length = np.count_nonzero(self.data_val)
         self.val = np.nonzero(self.data_val)[0]
 
@@ -108,17 +108,19 @@ class Dataset_krx:
                            range(len(self.days))]
             result = pool.starmap(processing, input_files)
 
-            for x, y, data_val in result:
+            for x, y, midprice, data_val in result:
                 if len(x_cat) == 0 and len(y_cat) == 0:
                     x_cat = x
                     y_cat = y
+                    midprice_cat = midprice
                     data_val_cat = data_val
                 else:
                     x_cat = np.concatenate((x_cat, x), axis=0)
                     y_cat = np.concatenate((y_cat, y), axis=0)
+                    midprice_cat = np.concatenate((midprice_cat, midprice), axis=0)
                     data_val_cat = np.concatenate((data_val_cat, data_val), axis=0)
 
-        return x_cat, y_cat, data_val_cat
+        return x_cat, y_cat, midprice_cat, data_val_cat
 
     def __len__(self):
         """Denotes the total number of samples"""
@@ -135,6 +137,8 @@ class Dataset_krx:
         y_data = torch.tensor(y_data)
         return x_data, y_data
 
+    def get_midprice(self):
+        return self.midprice[self.data_val]
 
 def __test_label_dist__():
     ticker = 'KQ150'
