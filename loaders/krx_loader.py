@@ -33,7 +33,7 @@ def __split_x_y__(norm_data, proc_data, k, threshold=0.05/100):
         else:
             y[i] = 1
 
-    midprice = midprice[k:len(midprice) - k]
+    midprice = midprice[:len(midprice) - k]
 
     # plt.subplots()
     # plt.plot(midprice)
@@ -49,8 +49,8 @@ def __split_x_y__(norm_data, proc_data, k, threshold=0.05/100):
     #
     # plt.show()
 
-
-    x = norm_data[:len(midprice) - k, :]
+    x = norm_data[:len(norm_data) - k, :]
+    y = np.concatenate((np.zeros(k), y))
     return x, y, midprice
 
 
