@@ -9,7 +9,7 @@ class Deeplob(nn.Module):
         if lighten:
             self.name += '-lighten'
 
-        self.input_norm = nn.BatchNorm2d(20)
+        self.input_norm = nn.BatchNorm2d(1)
 
         # convolution blocks
         self.conv1 = nn.Sequential(
