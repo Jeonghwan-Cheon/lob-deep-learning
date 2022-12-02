@@ -154,7 +154,7 @@ def __test_label_dist__():
         norm_day_data = __load_normalized_data__(using_norm_file)
         proc_day_data = __load_processed_data__(using_proc_file)
 
-        x, y = __split_x_y__(norm_day_data, proc_day_data, k)
+        x, y, _ = __split_x_y__(norm_day_data, proc_day_data, k)
         y = list(y)
         print(f'%% Day: {day}')
 
