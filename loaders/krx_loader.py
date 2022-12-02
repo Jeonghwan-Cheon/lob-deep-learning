@@ -138,7 +138,7 @@ class Dataset_krx:
         raw_index = self.val[index]
         x_data = self.x[raw_index - self.T:raw_index, :]
 
-        x_data = self.__input_normalization__(x_data)
+        #x_data = self.__input_normalization__(x_data)
 
         y_data = self.y[raw_index]
 
