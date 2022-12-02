@@ -24,7 +24,6 @@ def __get_dataset__(model_id, dataset_type, normalization, lighten, T, k, stock,
         day_length = len(get_normalized_data_list(stock[0], normalization))
         days = list(range(day_length))
 
-    random.shuffle(days)
     train_day_length = round(len(days) * train_test_ratio)
     train_days = days[:train_day_length]
     test_days = days[train_day_length:]
