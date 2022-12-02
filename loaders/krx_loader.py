@@ -154,7 +154,7 @@ class Dataset_krx:
 
 def __test_label_dist__():
     ticker = 'KQ150'
-    k = 10
+    k = 200
     normalization = 'Zscore'
     for day in range(12):
         norm_file_list = get_normalized_data_list(ticker, normalization)
@@ -170,7 +170,7 @@ def __test_label_dist__():
         y = list(y)
         print(f'%% Day: {day}')
 
-        for i in [0, 1, 2]:
+        for i in [0, 1]:
             print(f'{i}: {y.count(i)}')
 
 
