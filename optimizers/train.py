@@ -93,7 +93,7 @@ def train(model_id, dataset_type, normalization, lighten, T, k, stock, train_tes
     val_loader = DataLoader(dataset=dataset_val, batch_size=batch_size, shuffle=False, num_workers=num_workers)
 
     criterion = nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=1e-4)
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=5e-4)
 
     batch_gd(model_id = model_id, model = model, criterion = criterion, optimizer = optimizer,
              train_loader = train_loader, val_loader = val_loader, epochs=epoch, name = model.name)

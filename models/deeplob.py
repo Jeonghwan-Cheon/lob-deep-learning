@@ -75,7 +75,7 @@ class Deeplob(nn.Module):
         )
 
         # lstm layers
-        self.lstm = nn.LSTM(input_size=96, hidden_size=32, num_layers=1, batch_first=True)
+        self.lstm = nn.GRU(input_size=96, hidden_size=32, num_layers=1, batch_first=True)
         self.fc1 = nn.Linear(32, 3)
 
     def forward(self, x):
