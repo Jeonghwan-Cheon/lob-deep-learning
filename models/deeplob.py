@@ -76,7 +76,7 @@ class Deeplob(nn.Module):
 
         # lstm layers
         self.gru = nn.GRU(input_size=192, hidden_size=64, num_layers=1, batch_first=True)
-        self.fc1 = nn.Linear(32, 3)
+        self.fc1 = nn.Linear(64, 3)
         self.dropout = nn.Dropout(0.25)
 
     def forward(self, x):
