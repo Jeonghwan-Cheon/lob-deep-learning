@@ -127,7 +127,7 @@ class Dataset_krx:
         # vol = x_data[:, list(range(1, 20, 2))]
         # x_data[:, list(range(0, 20, 2))] = (price - np.mean(price))/np.std(price)
         # x_data[:, list(range(1, 20, 2))] = (vol - np.mean(vol))/np.std(vol)
-        return (x_data - np.mean(x_data))/np.std(x_data)
+        return x_data / np.max(x_data)
 
     def __len__(self):
         """Denotes the total number of samples"""
