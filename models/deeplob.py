@@ -80,7 +80,6 @@ class Deeplob(nn.Module):
 
     def forward(self, x):
         h0 = torch.zeros(1, x.size(0), 32).to(self.device)
-        c0 = torch.zeros(1, x.size(0), 32).to(self.device)
 
         x = self.conv1(x)
         x = self.conv2(x)
@@ -95,7 +94,7 @@ class Deeplob(nn.Module):
         x = x.permute(0, 2, 1, 3)
         x = torch.reshape(x, (-1, x.shape[1], x.shape[2]))
 
-        x, _ = self.lstm(x, (h0, c0))
+        x, _ = self.lstm(x, h0)
         x = x[:, -1, :]
         x = self.fc1(x)
         forecast_y = torch.softmax(x, dim=1)
