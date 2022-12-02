@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from loaders.krx_preprocess import get_normalized_data_list, get_processed_data_list
 
 
-def __split_x_y__(norm_data, proc_data, k, threshold=0.06/100, vis = True):
+def __split_x_y__(norm_data, proc_data, k, threshold=0.05/100, vis = True):
     """
     Extract lob data and annotated label from fi-2010 data
     Parameters
@@ -123,11 +123,11 @@ class Dataset_krx:
         return x_cat, y_cat, midprice_cat, data_val_cat
 
     def __input_normalization__(self, x_data):
-        # price = x_data[:, list(range(0, 20, 2))]
-        # vol = x_data[:, list(range(1, 20, 2))]
-        # x_data[:, list(range(0, 20, 2))] = (price - np.mean(price))/np.std(price)
-        # x_data[:, list(range(1, 20, 2))] = (vol - np.mean(vol))/np.std(vol)
-        return (x_data - np.mean(x_data))/np.std(x_data)
+        price = x_data[:, list(range(0, 20, 2))]
+        vol = x_data[:, list(range(1, 20, 2))]
+        x_data[:, list(range(0, 20, 2))] = (price - np.mean(price))/np.std(price)
+        x_data[:, list(range(1, 20, 2))] = (vol - np.mean(vol))/np.std(vol)
+        return x_data #(x_data - np.mean(x_data))/np.std(x_data)
 
     def __len__(self):
         """Denotes the total number of samples"""
