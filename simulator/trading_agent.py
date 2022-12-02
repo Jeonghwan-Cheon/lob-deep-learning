@@ -18,6 +18,7 @@ class Trading:
 
       self.index_history = []
       self.balance_history = []
+      self.position_history = []
       self.day_start = [0]
 
    def long(self, price):
@@ -44,6 +45,14 @@ class Trading:
       self.balance = self.cash + self.long_inventory * price - self.short_inventory * price
       self.balance_history.append(self.balance)
       self.index_history.append(price)
+
+      if self.long_inventory == 0 and self.short_inventory == 0:
+         self.position_history.append(0)
+      elif self.long_inventory > 0:
+         self.position_history.append(1)
+      elif self.short_inventory > 0:
+         self.position_history.append(-1)
+
 
    def get_result(self):
       return self.index_history, self.balance_history

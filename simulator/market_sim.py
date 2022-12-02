@@ -9,6 +9,7 @@ from loaders.fi2010_loader import Dataset_fi2010
 from loggers import logger
 from simulator.trading_agent import Trading
 
+
 def __get_data__(model_id):
     with open(os.path.join(logger.find_save_path(model_id), 'prediction.pkl'), 'rb') as f:
         all_midprices, all_targets, all_predictions = pickle.load(f)
@@ -71,12 +72,25 @@ def backtest(model_id):
                             TradingAgent.short(midprice[i])
                             patience_count = 0
 
-            # update balance
-            TradingAgent.evaluate_balance(midprice[i])
+        # update balance
+        TradingAgent.evaluate_balance(midprice[i])
 
     plt.plot(TradingAgent.balance_history/TradingAgent.balance_history[0])
     plt.plot(TradingAgent.index_history/TradingAgent.index_history[0])
+    y = TradingAgent.position_history
+
+    for i in range(len(y)):
+        if y[i] == 0:
+            pass
+        else:
+            if y[i] == 1:
+                color = 'red' #'#FDB631'
+            elif y[i] == -1:
+                color = 'blue' #'#C3C3C3'
+            plt.axvspan(i - 0.5, i + 0.5, color=color)
+
     plt.show()
+
 
 def vis_label(model_id):
     midprice, target, prediction = __get_data__(model_id)
@@ -98,4 +112,3 @@ def vis_label(model_id):
     path = logger.find_save_path(model_id)
     plt.show()
     plt.savefig(os.path.join(path, 'training_process.png'), format='png')
-

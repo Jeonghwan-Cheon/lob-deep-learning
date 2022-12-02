@@ -1,9 +1,13 @@
 import os
+import pickle
 import matplotlib.pyplot as plt
+
 from loggers import logger
 
+
 def vis_training_process(model_id):
-    training_info = logger.read_log(model_id, 'training')
+    with open(os.path.join(logger.find_save_path(model_id), 'training_process.pkl'), 'rb') as f:
+        training_info = pickle.load(f)
 
     plt.figure(figsize=(15,6))
 

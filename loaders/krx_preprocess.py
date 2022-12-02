@@ -4,9 +4,9 @@ import csv
 import fnmatch
 import numpy as np
 from multiprocessing import Pool
-import matplotlib.pyplot as plt
 
-def __get_raw__(filename, ticker, compression = 200):
+
+def __get_raw__(filename, ticker, compression = 500):
     """
     Handling function for loading raw krx dataset
     Parameters
@@ -130,6 +130,7 @@ def __save_preprocessed_data__():
                 print(f"{tmp_filename} saved")
     return
 
+
 def __get_day_list__():
     __save_preprocessed_data__()
     root_path = sys.path[0]
@@ -250,6 +251,7 @@ def get_normalized_data_list(ticker, normalization):
     file_list = list(set(file_list))
     file_list.sort(key = lambda x: (int(x.split('-')[1]), int(x.split('-')[2]), int(x.split('-')[3])))
     return file_list
+
 
 def get_processed_data_list(ticker):
     root_path = sys.path[0]

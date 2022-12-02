@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from loaders.krx_preprocess import get_normalized_data_list, get_processed_data_list
 
 
-def __split_x_y__(norm_data, proc_data, k, threshold=0.05/100):
+def __split_x_y__(norm_data, proc_data, k, threshold=0.05/100, vis = False):
     """
     Extract lob data and annotated label from fi-2010 data
     Parameters
@@ -35,19 +35,20 @@ def __split_x_y__(norm_data, proc_data, k, threshold=0.05/100):
 
     midprice = midprice[k:len(midprice) - k]
 
-    # plt.subplots()
-    # plt.plot(midprice)
-    # for i in range(len(midprice)):
-    #     if y[i]==1:
-    #         pass
-    #     else:
-    #         if y[i] == 2:
-    #             color='red'
-    #         elif y[i] == 0:
-    #             color='blue'
-    #         plt.axvspan(i-0.5, i+0.5, color=color, alpha=0.5)
-    #
-    # plt.show()
+    if vis:
+        plt.subplots()
+        plt.plot(midprice)
+        for i in range(len(midprice)):
+            if y[i]==1:
+                pass
+            else:
+                if y[i] == 2:
+                    color='red'
+                elif y[i] == 0:
+                    color='blue'
+                plt.axvspan(i-0.5, i+0.5, color=color, alpha=0.5)
+
+        plt.show()
 
     x = norm_data[k:len(norm_data) - k, :]
     print(x.shape, y.shape, midprice.shape)
@@ -150,11 +151,12 @@ class Dataset_krx:
     def get_midprice(self):
         return self.midprice[self.val]
 
+
 def __test_label_dist__():
     ticker = 'KQ150'
     k = 100
     normalization = 'Zscore'
-    for day in range(9):
+    for day in range(12):
         norm_file_list = get_normalized_data_list(ticker, normalization)
         using_norm_file = norm_file_list[day]
 

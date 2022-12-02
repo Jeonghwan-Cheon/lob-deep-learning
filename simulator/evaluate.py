@@ -15,6 +15,7 @@ from loaders.krx_loader import Dataset_krx
 from loggers import logger
 from models.deeplob import Deeplob
 
+
 def __get_dataset__(model_id, dataset_type, normalization, lighten, T, k, stock, test_days):
     if dataset_type == 'fi2010':
         auction = False
@@ -31,13 +32,15 @@ def __get_dataset__(model_id, dataset_type, normalization, lighten, T, k, stock,
     print(f"Testing Data Size : {dataset_test.__len__()}")
     return dataset_test
 
+
 def __get_hyperparams__(name):
     root_path = sys.path[0]
     with open(os.path.join(root_path, 'optimizers', 'hyperparams.yaml'), 'r') as stream:
         hyperparams = yaml.safe_load(stream)
     return hyperparams[name]
 
-def test(model_id, custom_test_days = None):
+
+def test(model_id):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model = torch.load(os.path.join(logger.find_save_path(model_id), 'best_val_model.pt'), map_location=device)
 
@@ -46,27 +49,14 @@ def test(model_id, custom_test_days = None):
     model = new_model
     model.to(device)
 
-    # dataset_info = logger.read_log(model_id, 'dataset_info')
-    # dataset_type = dataset_info['dataset_type']
-    # normalization = dataset_info['normalization']
-    # lighten = dataset_info['lighten']
-    # T = dataset_info['T']
-    # k = dataset_info['k']
-    # stock = dataset_info['stock']
-
-    dataset_type = 'krx'
-    normalization = 'Zscore'
-    lighten = True
-    T = 100
-    k = 100
-    stock = ['KQ150']
-
-    # if custom_test_days == None:
-    #     test_days = dataset_info['test_days']
-    # else:
-    #     test_days = custom_test_days
-
-    test_days = [6, 7, 8]
+    dataset_info = logger.read_log(model_id, 'dataset_info')
+    dataset_type = dataset_info['dataset_type']
+    normalization = dataset_info['normalization']
+    lighten = dataset_info['lighten']
+    T = dataset_info['T']
+    k = dataset_info['k']
+    stock = dataset_info['stock']
+    test_days = dataset_info['test_days']
 
     dataset_test = __get_dataset__(model_id, dataset_type, normalization, lighten, T, k, stock, test_days)
 
@@ -79,9 +69,7 @@ def test(model_id, custom_test_days = None):
     all_midprices = dataset_test.get_midprice()
     all_targets = []
     all_predictions = []
-    #all_outputs = []
 
-    count = 0
     for inputs, targets in tqdm(test_loader):
         # Move to GPU
         model.eval()
@@ -97,12 +85,9 @@ def test(model_id, custom_test_days = None):
         # update counts
         all_targets.append(targets.cpu().numpy())
         all_predictions.append(predictions.cpu().numpy())
-        #all_outputs.append(max_output.cpu().numpy())
 
     all_targets = np.concatenate(all_targets)
     all_predictions = np.concatenate(all_predictions)
-    #all_outputs = np.concatenate(all_outputs)
-
     test_acc = accuracy_score(all_targets, all_predictions)
 
     with open(os.path.join(logger.find_save_path(model_id), 'prediction.pkl'), 'wb') as f:

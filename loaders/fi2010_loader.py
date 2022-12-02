@@ -3,6 +3,7 @@ import sys
 import numpy as np
 import torch
 
+
 def __get_raw__(auction, normalization, day):
     """
     Handling function for loading raw FI2010 dataset
@@ -46,6 +47,7 @@ def __get_raw__(auction, normalization, day):
     fi2010_dataset = np.loadtxt(file_path)
     return fi2010_dataset
 
+
 def __extract_stock__(raw_data, stock_idx):
     """
     Extract specific stock data from raw FI2010 dataset
@@ -62,6 +64,7 @@ def __extract_stock__(raw_data, stock_idx):
     split_data = tuple(raw_data[:, boundaries[i] : boundaries[i + 1]] for i in range(n_boundaries + 1))
     return split_data[stock_idx]
 
+
 def __split_x_y__(data, lighten):
     """
     Extract lob data and annotated label from fi-2010 data
@@ -77,6 +80,7 @@ def __split_x_y__(data, lighten):
     x = data[:data_length, :].T
     y = data[-5:, :].T
     return x, y
+
 
 def __data_processing__(x, y, T, k):
     """
@@ -99,6 +103,7 @@ def __data_processing__(x, y, T, k):
     y_proc = y[T - 1:N]
     y_proc = y_proc[:, k] - 1
     return x_proc, y_proc
+
 
 class Dataset_fi2010:
     def __init__(self, auction, normalization, stock_idx, days, T, k, lighten):
@@ -144,6 +149,7 @@ class Dataset_fi2010:
     def __getitem__(self, index):
         """Generates samples of data"""
         return self.x[index], self.y[index]
+
 
 def __vis_sample_lob__():
     import matplotlib.pyplot as plt

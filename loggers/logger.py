@@ -3,6 +3,7 @@ import os
 import yaml
 from datetime import datetime
 
+
 def generate_id(name):
     init_time = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
     model_id = f'{name}_{init_time}'
@@ -14,10 +15,12 @@ def generate_id(name):
 
     return model_id
 
+
 def find_save_path(model_id):
     root_path = sys.path[0]
     dir_path = os.path.join(root_path, 'loggers', 'results', model_id)
     return dir_path
+
 
 def logger(model_id, header, contents):
     root_path = sys.path[0]
@@ -33,6 +36,7 @@ def logger(model_id, header, contents):
         current_yaml = contents
     with open(file_path, 'w') as yamlfile:
         yaml.dump(current_yaml, yamlfile)
+
 
 def read_log(model_id, header):
     root_path = sys.path[0]

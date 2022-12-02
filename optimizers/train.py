@@ -37,9 +37,6 @@ def __get_dataset__(model_id, dataset_type, normalization, lighten, T, k, stock,
 
     dataset_size = dataset_train_val.__len__()
     train_size = int(dataset_size * 0.8)
-    val_size = dataset_size - train_size
-    #dataset_train, dataset_val = random_split(dataset_train_val, [train_size, val_size])
-    #del dataset_train_val
 
     dataset_train = dataset_train_val
     dataset_val = dataset_test
@@ -61,11 +58,13 @@ def __get_dataset__(model_id, dataset_type, normalization, lighten, T, k, stock,
 
     return dataset_train, dataset_val
 
+
 def __get_hyperparams__(name):
     root_path = sys.path[0]
     with open(os.path.join(root_path, 'optimizers', 'hyperparams.yaml'), 'r') as stream:
         hyperparams = yaml.safe_load(stream)
     return hyperparams[name]
+
 
 def train(model_id, dataset_type, normalization, lighten, T, k, stock, train_test_ratio):
     # get train and validation set
@@ -97,8 +96,4 @@ def train(model_id, dataset_type, normalization, lighten, T, k, stock, train_tes
 
     batch_gd(model_id = model_id, model = model, criterion = criterion, optimizer = optimizer,
              train_loader = train_loader, val_loader = val_loader, epochs=epoch, name = model.name)
-    return
-
-def continual_learning(id, model, days):
-    pass
     return

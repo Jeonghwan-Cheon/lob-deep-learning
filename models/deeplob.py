@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 
+
 class Deeplob(nn.Module):
     def __init__(self, lighten):
         super().__init__()

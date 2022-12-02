@@ -3,6 +3,7 @@ import numpy as np
 from datetime import datetime
 from tqdm import tqdm
 import torch
+import pickle
 
 from loggers import logger
 
@@ -79,5 +80,7 @@ def batch_gd(model_id, model, criterion, optimizer, train_loader, val_loader, ep
         'loss': train_loss,
     }, os.path.join(logger.find_save_path(model_id), 'checkpoint.pt'))
 
-    logger.logger(model_id, 'training_info', training_info)
+    with open(os.path.join(logger.find_save_path(model_id), 'training_process.pkl'), 'wb') as f:
+        pickle.dump(training_info, f)
+
     return
