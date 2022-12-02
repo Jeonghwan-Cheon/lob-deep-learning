@@ -16,7 +16,7 @@ def __get_data__(model_id):
     return all_midprices, all_targets, all_predictions
 
 
-def backtest(model_id):
+def backtest_two(model_id):
     midprice, target, prediction = __get_data__(model_id)
     TradingAgent = Trading()
 
@@ -94,7 +94,7 @@ def backtest(model_id):
     return
 
 
-def backtest2(model_id):
+def backtest(model_id):
     midprice, target, prediction = __get_data__(model_id)
     TradingAgent = Trading()
 
