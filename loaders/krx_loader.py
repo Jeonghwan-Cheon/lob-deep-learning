@@ -151,12 +151,12 @@ class Dataset_krx:
     def get_midprice(self):
         return self.midprice[self.val]
 
-    def get_label_dist(self):
+    def get_class_weights(self):
         label = list(self.y[self.val])
-        label_dist = [label.count(0) / len(label),
-                      label.count(1) / len(label),
-                      label.count(2) / len(label)]
-        return label_dist
+        class_weights = [1 - label.count(0) / len(label),
+                      1 - label.count(1) / len(label),
+                      1 - label.count(2) / len(label)]
+        return class_weights
 
 
 def __test_label_dist__():
