@@ -12,6 +12,7 @@ from loaders.krx_loader import Dataset_krx
 from models.deeplob import Deeplob
 from optimizers.batch_gd import batch_gd
 from loggers import logger
+import random
 
 
 def __get_dataset__(model_id, dataset_type, normalization, lighten, T, k, stock, train_test_ratio):
@@ -23,9 +24,11 @@ def __get_dataset__(model_id, dataset_type, normalization, lighten, T, k, stock,
         day_length = len(get_normalized_data_list(stock[0], normalization))
         days = list(range(day_length))
 
+    random.shuffle(days)
     train_day_length = round(len(days) * train_test_ratio)
     train_days = days[:train_day_length]
     test_days = days[train_day_length:]
+
 
     if dataset_type == 'fi2010':
         dataset_train_val = Dataset_fi2010(auction, normalization, stock, train_days, T, k, lighten)
