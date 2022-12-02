@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from loaders.krx_preprocess import get_normalized_data_list, get_processed_data_list
 
 
-def __split_x_y__(norm_data, proc_data, k, threshold=0.07/100, vis = False):
+def __split_x_y__(norm_data, proc_data, k, threshold=0.05/100, vis = True):
     """
     Extract lob data and annotated label from fi-2010 data
     Parameters
@@ -161,7 +161,7 @@ class Dataset_krx:
 
 def __test_label_dist__():
     ticker = 'KQ150'
-    k = 100
+    k = 50
     normalization = 'Zscore'
     for day in range(12):
         norm_file_list = get_normalized_data_list(ticker, normalization)
