@@ -148,8 +148,7 @@ class Dataset_krx:
         return x_data, y_data
 
     def get_midprice(self):
-        print(self.val)
-        return self.midprice[self.data_val]
+        return self.midprice[self.val]
 
 def __test_label_dist__():
     ticker = 'KQ150'
