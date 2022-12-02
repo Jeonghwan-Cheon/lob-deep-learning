@@ -75,21 +75,24 @@ def backtest(model_id):
         # update balance
         TradingAgent.evaluate_balance(midprice[i])
 
-    plt.plot(TradingAgent.balance_history/TradingAgent.balance_history[0])
-    plt.plot(TradingAgent.index_history/TradingAgent.index_history[0])
-    y = TradingAgent.position_history
+    # plt.plot(TradingAgent.balance_history/TradingAgent.balance_history[0])
+    # plt.plot(TradingAgent.index_history/TradingAgent.index_history[0])
+    # y = TradingAgent.position_history
 
-    for i in range(len(y)):
-        if y[i] == 0:
-            pass
-        else:
-            if y[i] == 1:
-                color = 'red' #'#FDB631'
-            elif y[i] == -1:
-                color = 'blue' #'#C3C3C3'
-            plt.axvspan(i - 0.5, i + 0.5, color=color)
+    # for i in range(len(y)):
+    #     if y[i] == 0:
+    #         pass
+    #     else:
+    #         if y[i] == 1:
+    #             color = 'red' #'#FDB631'
+    #         elif y[i] == -1:
+    #             color = 'blue' #'#C3C3C3'
+    #         plt.axvspan(i - 0.5, i + 0.5, color=color)
+    #
+    # plt.show()
 
-    plt.show()
+    print(TradingAgent.balance_history/TradingAgent.balance_history[0])
+    return
 
 
 def vis_label(model_id):
