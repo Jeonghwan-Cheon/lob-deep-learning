@@ -97,6 +97,7 @@ class Deeplob(nn.Module):
 
         x, _ = self.gru(x, h0)
         x = x[:, -1, :]
+        x = self.dropout(x)
         x = self.fc1(x)
         forecast_y = torch.softmax(x, dim=1)
 
