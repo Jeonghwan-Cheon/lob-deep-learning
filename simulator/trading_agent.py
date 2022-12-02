@@ -47,11 +47,11 @@ class Trading:
       self.index_history.append(price)
 
       if self.long_inventory == 0 and self.short_inventory == 0:
-         self.position_history.append(0)
+         self.position_history.append(-1)
       elif self.long_inventory > 0:
          self.position_history.append(1)
       elif self.short_inventory > 0:
-         self.position_history.append(-1)
+         self.position_history.append(0)
 
 
    def get_result(self):

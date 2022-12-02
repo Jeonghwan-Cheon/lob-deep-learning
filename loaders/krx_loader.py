@@ -37,14 +37,11 @@ def __split_x_y__(norm_data, proc_data, k, threshold=0, vis = True):
         plt.subplots()
         plt.plot(midprice)
         for i in range(len(midprice)):
-            if y[i]==1:
-                pass
-            else:
-                if y[i] == 2:
-                    color='red'
-                elif y[i] == 0:
-                    color='blue'
-                plt.axvspan(i-0.5, i+0.5, color=color, alpha=0.5)
+            if y[i] == 1:
+                color='red'
+            elif y[i] == 0:
+                color='blue'
+            plt.axvspan(i-0.5, i+0.5, color=color, alpha=0.5)
 
         plt.show()
 
@@ -157,7 +154,7 @@ class Dataset_krx:
 
 def __test_label_dist__():
     ticker = 'KQ150'
-    k = 100
+    k = 10
     normalization = 'Zscore'
     for day in range(12):
         norm_file_list = get_normalized_data_list(ticker, normalization)
