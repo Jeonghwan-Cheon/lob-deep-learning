@@ -91,7 +91,9 @@ def train(model_id, dataset_type, normalization, lighten, T, k, stock, train_tes
     train_loader = DataLoader(dataset=dataset_train, batch_size=batch_size, shuffle=True, num_workers=num_workers)
     val_loader = DataLoader(dataset=dataset_val, batch_size=batch_size, shuffle=False, num_workers=num_workers)
 
-    criterion = nn.CrossEntropyLoss()
+    class_weights = 1 - dataset_train.get_label_dist()
+
+    criterion = nn.CrossEntropyLoss(weight = class_weights)
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
     batch_gd(model_id = model_id, model = model, criterion = criterion, optimizer = optimizer,

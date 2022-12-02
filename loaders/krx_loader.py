@@ -151,6 +151,11 @@ class Dataset_krx:
     def get_midprice(self):
         return self.midprice[self.val]
 
+    def get_label_dist(self):
+        label = self.y[self.val]
+        label_dist = np.array([label.count(0), label.count(1), label.count(2)]) / len(label)
+        return label_dist
+
 
 def __test_label_dist__():
     ticker = 'KQ150'
