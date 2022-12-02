@@ -153,7 +153,9 @@ class Dataset_krx:
 
     def get_label_dist(self):
         label = list(self.y[self.val])
-        label_dist = np.array([label.count(0), label.count(1), label.count(2)]) / len(label)
+        label_dist = [label.count(0) / len(label),
+                      label.count(1) / len(label),
+                      label.count(2) / len(label)]
         return label_dist
 
 
