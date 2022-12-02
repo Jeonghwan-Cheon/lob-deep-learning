@@ -9,6 +9,8 @@ class Deeplob(nn.Module):
         if lighten:
             self.name += '-lighten'
 
+        self.input_norm = nn.functional.normalize(dim=1)
+
         # convolution blocks
         self.conv1 = nn.Sequential(
             nn.Conv2d(in_channels=1, out_channels=32, kernel_size=(1, 2), stride=(1, 2)),
@@ -75,13 +77,14 @@ class Deeplob(nn.Module):
         )
 
         # lstm layers
-        self.gru = nn.GRU(input_size=192, hidden_size=32, num_layers=1, batch_first=True)
+        self.gru = nn.GRU(input_size=192, hidden_size=64, num_layers=1, batch_first=True)
         self.fc1 = nn.Linear(32, 3)
         self.dropout = nn.Dropout(0.25)
 
     def forward(self, x):
-        h0 = torch.zeros(1, x.size(0), 32).to(self.device)
+        h0 = torch.zeros(1, x.size(0), 64).to(self.device)
 
+        x = self.input_norm(x)
         x = self.conv1(x)
         x = self.conv2(x)
         x = self.conv3(x)
@@ -95,10 +98,8 @@ class Deeplob(nn.Module):
         x = x.permute(0, 2, 1, 3)
         x = torch.reshape(x, (-1, x.shape[1], x.shape[2]))
 
-        x = self.dropout(x)
         x, _ = self.gru(x, h0)
         x = x[:, -1, :]
-        x = self.dropout(x)
         x = self.fc1(x)
         forecast_y = torch.softmax(x, dim=1)
 
