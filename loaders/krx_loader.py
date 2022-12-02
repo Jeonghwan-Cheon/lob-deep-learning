@@ -151,8 +151,7 @@ class Dataset_krx:
     def get_class_weights(self):
         label = list(self.y[self.val])
         class_weights = [1 - label.count(0) / len(label),
-                      1 - label.count(1) / len(label),
-                      1 - label.count(2) / len(label)]
+                      1 - label.count(1) / len(label)]
         return class_weights
 
 
