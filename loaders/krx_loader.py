@@ -154,7 +154,7 @@ class Dataset_krx:
 
 def __test_label_dist__():
     ticker = 'KQ150'
-    k = 200
+    k = 50
     normalization = 'Zscore'
     for day in range(12):
         norm_file_list = get_normalized_data_list(ticker, normalization)
