@@ -99,7 +99,6 @@ def test(model_id, custom_test_days = None):
         all_predictions.append(predictions.cpu().numpy())
         #all_outputs.append(max_output.cpu().numpy())
 
-    all_midprices = np.concatenate(all_midprices)
     all_targets = np.concatenate(all_targets)
     all_predictions = np.concatenate(all_predictions)
     #all_outputs = np.concatenate(all_outputs)
