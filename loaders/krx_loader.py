@@ -152,7 +152,7 @@ class Dataset_krx:
         return self.midprice[self.val]
 
     def get_label_dist(self):
-        label = self.y[self.val]
+        label = list(self.y[self.val])
         label_dist = np.array([label.count(0), label.count(1), label.count(2)]) / len(label)
         return label_dist
 
