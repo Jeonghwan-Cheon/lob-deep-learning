@@ -14,5 +14,5 @@ if __name__ == '__main__':
     # evaluate.test(model_id=model_id)
 
     id = 'deeplob-lighten_2022-12-02_08:32:21'
-    evaluate.test(model_id=id)
-    # backtest(id)
+    # evaluate.test(model_id=id)
+    backtest(id)

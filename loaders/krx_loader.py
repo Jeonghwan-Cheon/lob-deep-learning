@@ -35,19 +35,19 @@ def __split_x_y__(norm_data, proc_data, k, threshold=0.05/100):
 
     midprice = midprice[k:len(midprice) - k]
 
-    plt.subplots()
-    plt.plot(midprice)
-    for i in range(len(midprice)):
-        if y[i]==1:
-            pass
-        else:
-            if y[i] == 2:
-                color='red'
-            elif y[i] == 0:
-                color='blue'
-            plt.axvspan(i-0.5, i+0.5, color=color, alpha=0.5)
-
-    plt.show()
+    # plt.subplots()
+    # plt.plot(midprice)
+    # for i in range(len(midprice)):
+    #     if y[i]==1:
+    #         pass
+    #     else:
+    #         if y[i] == 2:
+    #             color='red'
+    #         elif y[i] == 0:
+    #             color='blue'
+    #         plt.axvspan(i-0.5, i+0.5, color=color, alpha=0.5)
+    #
+    # plt.show()
 
     x = norm_data[k:len(norm_data) - k, :]
     print(x.shape, y.shape, midprice.shape)
