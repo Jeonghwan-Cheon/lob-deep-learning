@@ -125,8 +125,8 @@ class Dataset_krx:
     def __input_normalization__(self, x_data):
         price = x_data[:, list(range(0, 20, 2))]
         vol = x_data[:, list(range(1, 20, 2))]
-        x_data[:, list(range(0, 20, 2))] = (x_data[:, list(range(0, 20, 2))] - np.mean(price))/np.std(price)
-        x_data[:, list(range(1, 20, 2))] = (x_data[:, list(range(1, 20, 2))] - np.mean(vol))/np.std(vol)
+        x_data[:, list(range(0, 20, 2))] = (price - np.mean(price))/np.std(price)
+        x_data[:, list(range(1, 20, 2))] = (vol - np.mean(vol))/np.std(vol)
         return x_data
 
     def __len__(self):
