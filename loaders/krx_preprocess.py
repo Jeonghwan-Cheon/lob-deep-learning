@@ -4,9 +4,9 @@ import csv
 import fnmatch
 import numpy as np
 from multiprocessing import Pool
+import matplotlib.pyplot as plt
 
-
-def __get_raw__(filename, ticker, compression = 10):
+def __get_raw__(filename, ticker, compression = 200):
     """
     Handling function for loading raw krx dataset
     Parameters
@@ -25,7 +25,6 @@ def __get_raw__(filename, ticker, compression = 10):
         code = '106SC'
 
     lob_data = []
-
     with open(file_path, 'r', encoding='utf-8') as csvfile:
         reader = csv.reader(csvfile)
         comp_count = 0
@@ -48,7 +47,6 @@ def __get_raw__(filename, ticker, compression = 10):
                     if comp_count == compression:
                         lob_data.append(temp_lob_data)
                         comp_count = 0
-
     lob_data = np.array(lob_data).astype(np.float64)
     if ticker == "KS200":
         lob_data[:, list(range(0, 20, 2))] = lob_data[:, list(range(0, 20, 2))] * 100
@@ -85,7 +83,7 @@ def __single_day_data__(year, month, day, ticker):
     lob_data_cat = np.array([])
 
     def get_filename(f):
-        return os.path.join(path1, file)
+        return os.path.join(path1, f)
 
     with Pool() as pool:
         input_files = [(get_filename(file), ticker) for file in day_file]

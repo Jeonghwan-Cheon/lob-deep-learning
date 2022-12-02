@@ -3,11 +3,12 @@ import os
 import sys
 import numpy as np
 import torch
+import matplotlib.pyplot as plt
 
 from loaders.krx_preprocess import get_normalized_data_list, get_processed_data_list
 
 
-def __split_x_y__(norm_data, proc_data, k, threshold=0.002/100):
+def __split_x_y__(norm_data, proc_data, k, threshold=0.05/100):
     """
     Extract lob data and annotated label from fi-2010 data
     Parameters
@@ -15,15 +16,15 @@ def __split_x_y__(norm_data, proc_data, k, threshold=0.002/100):
     data: Numpy Array
     k: Prediction horizon
     """
-
     midprice = (proc_data[:, 0] + proc_data[:, 2]) / 2
     y = np.zeros(len(midprice) - 2*k)
 
     for i in range(len(midprice) - 2*k):
+
         m_i = midprice[i+k]
         m_p = np.mean(midprice[i + k + 1:i + 2 * k])
-        #m_m = np.mean(midprice[i:i + k - 1])
-        l_i = m_p / m_i - 1
+        m_m = np.mean(midprice[i : i + k - 1])
+        l_i = m_p / m_m - 1
 
         if l_i > threshold:
             y[i] = 2
@@ -32,29 +33,25 @@ def __split_x_y__(norm_data, proc_data, k, threshold=0.002/100):
         else:
             y[i] = 1
 
+    midprice = midprice[k:len(midprice) - k]
+
+    plt.subplots()
+    plt.plot(midprice)
+    for i in range(len(midprice)):
+        if y[i]==1:
+            pass
+        else:
+            if y[i] == 2:
+                color='red'
+            elif y[i] == 0:
+                color='blue'
+            plt.axvspan(i-0.5, i+0.5, color=color, alpha=0.5)
+
+    plt.show()
+
+
     x = norm_data[:len(midprice) - k, :]
     return x, y
-
-
-def __data_processing__(x, y, T):
-    """
-    Process whole time-series-data
-    Parameters
-    ----------
-    x: Numpy Array of LOB
-    y: Numpy Array of annotated label
-    T: Length of time frame in single input data
-    """
-    [N, D] = x.shape
-
-    # x processing
-    x_proc = np.zeros((N - T + 1, T, D))
-    for i in range(T, N + 1):
-        x_proc[i - T] = x[i - T:i, :]
-
-    # y processing
-    y_proc = y[T - 1:N] - 1
-    return x_proc, y_proc
 
 
 def __load_normalized_data__(filename):
@@ -141,7 +138,7 @@ class Dataset_krx:
 
 def __test_label_dist__():
     ticker = 'KQ150'
-    k = 5
+    k = 100
     normalization = 'Zscore'
     for day in range(9):
         norm_file_list = get_normalized_data_list(ticker, normalization)
