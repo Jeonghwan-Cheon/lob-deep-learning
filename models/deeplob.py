@@ -9,8 +9,6 @@ class Deeplob(nn.Module):
         if lighten:
             self.name += '-lighten'
 
-        self.input_norm = nn.BatchNorm2d(1)
-
         # convolution blocks
         self.conv1 = nn.Sequential(
             nn.Conv2d(in_channels=1, out_channels=32, kernel_size=(1, 2), stride=(1, 2)),
@@ -84,7 +82,6 @@ class Deeplob(nn.Module):
     def forward(self, x):
         h0 = torch.zeros(1, x.size(0), 64).to(self.device)
 
-        x = self.input_norm(x)
         x = self.conv1(x)
         x = self.conv2(x)
         x = self.conv3(x)

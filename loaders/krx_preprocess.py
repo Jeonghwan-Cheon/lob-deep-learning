@@ -233,8 +233,13 @@ def __normalize_data__(ticker, normalization, period=1):
                     volume_divide_term = 10 ** volume_decimal
 
                 normalized_data = np.zeros(data.shape)
-                normalized_data[:, list(range(0, 20, 2))] = (data[:, list(range(0, 20, 2))] - price_minus_term) / price_divide_term
-                normalized_data[:, list(range(1, 20, 2))] = (data[:, list(range(1, 20, 2))] - volume_minus_term) / volume_divide_term
+                # normalized_data[:, list(range(0, 20, 2))] = (data[:, list(range(0, 20, 2))] - price_minus_term) / price_divide_term
+                # normalized_data[:, list(range(1, 20, 2))] = (data[:, list(range(1, 20, 2))] - volume_minus_term) / volume_divide_term
+
+                normalized_data[:, list(range(0, 20, 2))] = data[:, list(
+                    range(0, 20, 2))]
+                normalized_data[:, list(range(1, 20, 2))] = data[:, list(
+                    range(1, 20, 2))]
 
                 np.savetxt(tmp_target_path, normalized_data, fmt='%.7e')
                 print(f"{target_filename} saved")

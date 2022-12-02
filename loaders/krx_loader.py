@@ -122,6 +122,10 @@ class Dataset_krx:
 
         return x_cat, y_cat, midprice_cat, data_val_cat
 
+    def __input_normalization__(self, x_data):
+        x_data = (x_data - np.mean(x_data))/np.std(x_data)
+        return x_data
+
     def __len__(self):
         """Denotes the total number of samples"""
         return self.length
@@ -130,6 +134,8 @@ class Dataset_krx:
         """Generates samples of data"""
         raw_index = self.val[index]
         x_data = self.x[raw_index - self.T:raw_index, :]
+
+        x_data = self.__input_normalization__(x_data)
 
         y_data = self.y[raw_index]
 
