@@ -91,11 +91,11 @@ class Deeplob(nn.Module):
         x_inp3 = self.inp3(x)
 
         x = torch.cat((x_inp1, x_inp2, x_inp3), dim=1)
-        x = self.dropout(x)
 
         x = x.permute(0, 2, 1, 3)
         x = torch.reshape(x, (-1, x.shape[1], x.shape[2]))
 
+        x = self.dropout(x)
         x, _ = self.gru(x, h0)
         x = x[:, -1, :]
         x = self.dropout(x)
