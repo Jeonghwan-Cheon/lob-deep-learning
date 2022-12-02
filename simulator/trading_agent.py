@@ -4,7 +4,7 @@ class Trading:
       self.initial_balance = 10000000
 
       # market parameter
-      self.fee = 0.003 / 100
+      self.fee = 0.003 / 100 * 0
 
       # temporal variables
       self.cash = self.initial_balance

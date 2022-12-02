@@ -20,7 +20,106 @@ def backtest(model_id):
     midprice, target, prediction = __get_data__(model_id)
     TradingAgent = Trading()
 
-    patience = 15
+    patience = 10
+    patience_count = 0
+
+    for i in range(len(prediction)):
+        if 0 < i < len(prediction) - 1:
+
+            # The end of day data
+            if abs(midprice[i+1]-midprice[i])/midprice[i] > 0.001:
+                TradingAgent.day_start.append(i+1)
+                if TradingAgent.long_inventory > 0:
+                    TradingAgent.exit_long(midprice[i])
+                if TradingAgent.short_inventory > 0:
+                    TradingAgent.exit_short(midprice[i])
+                print("===============")
+
+            # Inside day data
+            else:
+                # (1) model predicts stationary
+                if prediction[i] == 0:
+                    # empty inventory -> long
+                    if TradingAgent.long_inventory == 0 and TradingAgent.short_inventory == 0:
+                        pass
+                    # already has long position -> pass
+                    elif TradingAgent.long_inventory > 0:
+                        patience_count += 1
+                        if patience_count >= patience:
+                            print("Short: ", midprice[i])
+                            TradingAgent.exit_long(midprice[i])
+                    # already has short position
+                    elif TradingAgent.short_inventory > 0:
+                        patience_count += 1
+                        if patience_count >= patience:
+                            print("Long: ", midprice[i])
+                            TradingAgent.exit_short(midprice[i])
+                            patience_count = 0
+
+                # (2) model predicts up
+                elif prediction[i] == 1:
+                    # empty inventory -> long
+                    if TradingAgent.long_inventory == 0 and TradingAgent.short_inventory == 0:
+                        TradingAgent.long(midprice[i])
+                        print("Long: ", midprice[i])
+                    # already has long position -> pass
+                    elif TradingAgent.long_inventory > 0:
+                        pass
+                    # has counter-position & patience over -> change position
+                    elif TradingAgent.short_inventory > 0:
+                        patience_count += 1
+                        if patience_count >= patience:
+                            print("Long: ", midprice[i])
+                            TradingAgent.exit_short(midprice[i])
+                            TradingAgent.long(midprice[i])
+                            patience_count = 0
+
+                # (3) model predicts down
+                elif prediction[i] == -1:
+                    # empty inventory -> short
+                    if TradingAgent.long_inventory == 0 and TradingAgent.short_inventory == 0:
+                        print("Short: ", midprice[i])
+                        TradingAgent.short(midprice[i])
+                    # already has short position
+                    elif TradingAgent.short_inventory > 0:
+                        pass
+                    # has counter-position
+                    elif TradingAgent.long_inventory > 0:
+                        patience_count += 1
+                        if patience_count >= patience:
+                            TradingAgent.exit_long(midprice[i])
+                            TradingAgent.short(midprice[i])
+                            patience_count = 0
+                            print("Short: ", midprice[i])
+
+        # update balance
+        TradingAgent.evaluate_balance(midprice[i])
+
+    plt.plot(TradingAgent.balance_history/TradingAgent.balance_history[0], label='balance')
+    plt.plot(TradingAgent.index_history/TradingAgent.index_history[0], label='index')
+    print(TradingAgent.day_start)
+    y = TradingAgent.position_history
+
+    for i in range(len(y)):
+        if y[i] == 0:
+            pass
+        else:
+            if y[i] == 1:
+                color = 'red' #'#FDB631'
+            elif y[i] == -1:
+                color = 'blue' #'#C3C3C3'
+            plt.axvspan(i - 0.5, i + 0.5, color=color)
+
+    plt.show()
+    print(TradingAgent.balance_history[-1]/TradingAgent.balance_history[0])
+    return
+
+
+def backtest2(model_id):
+    midprice, target, prediction = __get_data__(model_id)
+    TradingAgent = Trading()
+
+    patience = 100
     patience_count = 0
 
     for i in range(len(prediction)):
