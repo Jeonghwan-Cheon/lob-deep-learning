@@ -130,6 +130,9 @@ class Dataset_krx:
         """Generates samples of data"""
         raw_index = self.val[index]
         x_data = self.x[raw_index - self.T:raw_index, :]
+
+        x_data = x_data/max(x_data)
+
         y_data = self.y[raw_index]
 
         x_data = np.expand_dims(x_data, axis=0)
