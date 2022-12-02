@@ -7,6 +7,7 @@ from simulator.market_sim import backtest
 
 
 if __name__ == '__main__':
+    # __test_label_dist__()
     model_id = logger.generate_id('deeplob-lighten')
     train.train(
         model_id=model_id, dataset_type = 'krx', normalization= 'Zscore', lighten= True,

@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from loaders.krx_preprocess import get_normalized_data_list, get_processed_data_list
 
 
-def __split_x_y__(norm_data, proc_data, k, threshold=0.05/100*0, vis = True):
+def __split_x_y__(norm_data, proc_data, k, threshold=0, vis = True):
     """
     Extract lob data and annotated label from fi-2010 data
     Parameters
@@ -28,10 +28,8 @@ def __split_x_y__(norm_data, proc_data, k, threshold=0.05/100*0, vis = True):
 
         if l_i > threshold:
             y[i] = 1
-        else: #l_i < -threshold:
+        else:
             y[i] = 0
-        # else:
-        #     y[i] = 1
 
     midprice = midprice[k:len(midprice) - k]
 
