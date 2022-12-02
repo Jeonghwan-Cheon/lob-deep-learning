@@ -20,7 +20,7 @@ def backtest(model_id):
     midprice, target, prediction = __get_data__(model_id)
     TradingAgent = Trading()
 
-    patience = 15
+    patience = 5
     patience_count = 0
 
     for i in range(len(prediction)):
