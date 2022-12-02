@@ -93,7 +93,7 @@ def train(model_id, dataset_type, normalization, lighten, T, k, stock, train_tes
 
     class_weights = dataset_train.get_class_weights()
 
-    criterion = nn.CrossEntropyLoss(weight = Tensor(class_weights, dtype=torch.float))
+    criterion = nn.CrossEntropyLoss(weight = Tensor(class_weights, model.device))
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
     batch_gd(model_id = model_id, model = model, criterion = criterion, optimizer = optimizer,
