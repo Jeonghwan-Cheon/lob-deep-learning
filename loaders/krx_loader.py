@@ -27,11 +27,11 @@ def __split_x_y__(norm_data, proc_data, k, threshold=0.05/100, vis = False):
         l_i = m_p / m_m - 1
 
         if l_i > threshold:
-            y[i] = 1
+            y[i] = 2
         elif l_i < -threshold:
-            y[i] = -1
-        else:
             y[i] = 0
+        else:
+            y[i] = 1
 
     midprice = midprice[k:len(midprice) - k]
 
