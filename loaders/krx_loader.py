@@ -148,6 +148,8 @@ class Dataset_krx:
         return x_data, y_data
 
     def get_midprice(self):
+        print(self.midprice.type)
+        print(self.data_val.type)
         return np.take(self.midprice, self.data_val)
 
 def __test_label_dist__():
