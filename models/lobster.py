@@ -2,11 +2,11 @@ import torch
 import torch.nn as nn
 
 
-class Deeplob(nn.Module):
+class Lobster(nn.Module):
     def __init__(self, lighten):
         super().__init__()
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        self.name = 'deeplob'
+        self.name = 'lobster'
         if lighten:
             self.name += '-lighten'
 
@@ -76,12 +76,11 @@ class Deeplob(nn.Module):
         )
 
         # lstm layers
-        self.lstm = nn.LSTM(input_size=192, hidden_size=64, num_layers=1, batch_first=True)
+        self.gru = nn.GRU(input_size=192, hidden_size=64, num_layers=1, batch_first=True)
         self.fc1 = nn.Linear(64, 3)
 
     def forward(self, x):
         h0 = torch.zeros(1, x.size(0), 64).to(self.device)
-        c0 = torch.zeros(1, x.size(0), 64).to(self.device)
 
         x = self.conv1(x)
         x = self.conv2(x)
@@ -95,9 +94,9 @@ class Deeplob(nn.Module):
 
         x = x.permute(0, 2, 1, 3)
         x = torch.reshape(x, (-1, x.shape[1], x.shape[2]))
-
-        x, _ = self.lstm(x, (h0, c0))
+        x, _ = self.gru(x, h0)
         x = x[:, -1, :]
+
         x = self.fc1(x)
         forecast_y = torch.softmax(x, dim=1)
 

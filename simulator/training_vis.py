@@ -26,4 +26,4 @@ def vis_training_process(model_id):
     plt.ylabel('Accuracy')
 
     path = logger.find_save_path(model_id)
-    plt.savefig(os.path.join(path, 'training_process.eps'), format='eps')
+    plt.savefig(os.path.join(path, 'training_process.svg'), format='svg')

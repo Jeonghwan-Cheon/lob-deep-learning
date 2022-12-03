@@ -4,7 +4,7 @@ class Trading:
       self.initial_balance = 10000000
 
       # market parameter
-      self.fee = 0.003 / 100 * 0
+      self.fee = 0.003 / 100
 
       # temporal variables
       self.cash = self.initial_balance
@@ -47,11 +47,11 @@ class Trading:
       self.index_history.append(price)
 
       if self.long_inventory == 0 and self.short_inventory == 0:
-         self.position_history.append(-1)
+         self.position_history.append(0)
       elif self.long_inventory > 0:
          self.position_history.append(1)
       elif self.short_inventory > 0:
-         self.position_history.append(0)
+         self.position_history.append(-1)
 
 
    def get_result(self):

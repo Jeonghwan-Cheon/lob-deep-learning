@@ -10,9 +10,9 @@ from loaders.fi2010_loader import Dataset_fi2010
 from loaders.krx_preprocess import get_normalized_data_list
 from loaders.krx_loader import Dataset_krx
 from models.deeplob import Deeplob
+from models.lobster import Lobster
 from optimizers.batch_gd import batch_gd
 from loggers import logger
-import random
 
 
 def __get_dataset__(model_id, dataset_type, normalization, lighten, T, k, stock, train_test_ratio):
@@ -65,11 +65,14 @@ def __get_hyperparams__(name):
     return hyperparams[name]
 
 
-def train(model_id, dataset_type, normalization, lighten, T, k, stock, train_test_ratio):
+def train(model_id, dataset_type, normalization, lighten, T, k, stock, train_test_ratio, model_type):
     # get train and validation set
     dataset_train, dataset_val = __get_dataset__(model_id, dataset_type, normalization, lighten, T, k, stock, train_test_ratio)
 
-    model = Deeplob(lighten=lighten)
+    if model_type == "deeplob":
+        model = Deeplob(lighten=lighten)
+    elif model_type == "lobster":
+        model = Lobster(lighten=lighten)
     model.to(model.device)
 
     if lighten:
