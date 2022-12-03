@@ -6,7 +6,7 @@ deeplob:
   num_workers: 4
 
 deeplob-lighten:
-  batch_size: 256
+  batch_size: 128
   learning_rate: 0.01
   epsilon: 1e-08
   epoch: 20

@@ -37,9 +37,6 @@ def __get_dataset__(model_id, dataset_type, normalization, lighten, T, k, stock,
     else:
         print("Error: wrong dataset type")
 
-    dataset_size = dataset_train_val.__len__()
-    train_size = int(dataset_size * 0.8)
-
     dataset_train = dataset_train_val
     dataset_val = dataset_test
 
