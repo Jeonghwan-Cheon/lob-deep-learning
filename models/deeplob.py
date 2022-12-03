@@ -78,7 +78,6 @@ class Deeplob(nn.Module):
         # lstm layers
         self.gru = nn.GRU(input_size=192, hidden_size=64, num_layers=1, batch_first=True)
         self.fc1 = nn.Linear(64, 3)
-        self.dropout = nn.Dropout(0.2)
 
     def forward(self, x):
         h0 = torch.zeros(1, x.size(0), 64).to(self.device)
