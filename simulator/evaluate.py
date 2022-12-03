@@ -14,6 +14,7 @@ from loaders.krx_preprocess import get_normalized_data_list
 from loaders.krx_loader import Dataset_krx
 from loggers import logger
 from models.deeplob import Deeplob
+from models.lobster import Lobster
 
 
 def __get_dataset__(model_id, dataset_type, normalization, lighten, T, k, stock, test_days):
@@ -40,14 +41,7 @@ def __get_hyperparams__(name):
     return hyperparams[name]
 
 
-def test(model_id):
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    model = torch.load(os.path.join(logger.find_save_path(model_id), 'best_val_model.pt'), map_location=device)
-
-    new_model = Deeplob(lighten=True)
-    new_model.load_state_dict(model.state_dict())
-    model = new_model
-    model.to(device)
+def test(model_id, model_type):
 
     dataset_info = logger.read_log(model_id, 'dataset_info')
     dataset_type = dataset_info['dataset_type']
@@ -57,6 +51,19 @@ def test(model_id):
     k = dataset_info['k']
     stock = dataset_info['stock']
     test_days = dataset_info['test_days']
+
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    model = torch.load(os.path.join(logger.find_save_path(model_id), 'best_val_model.pt'), map_location=device)
+
+    if model_type == "deeplob":
+        new_model = Deeplob(lighten=lighten)
+    elif model_type == "lobster":
+        new_model = Lobster(lighten=lighten)
+
+    new_model.load_state_dict(model.state_dict())
+    model = new_model
+    model.to(device)
+
 
     dataset_test = __get_dataset__(model_id, dataset_type, normalization, lighten, T, k, stock, test_days)
 
