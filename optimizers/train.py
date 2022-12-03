@@ -31,6 +31,7 @@ def __get_dataset__(model_id, dataset_type, normalization, lighten, T, k, stock,
 
     if dataset_type == 'fi2010':
         dataset_train_val = Dataset_fi2010(auction, normalization, stock, train_days, T, k, lighten)
+        dataset_test = Dataset_fi2010(auction, normalization, stock, test_days, T, k, lighten)
     elif dataset_type == 'krx':
         dataset_train_val = Dataset_krx(normalization, stock, train_days, T, k)
         dataset_test = Dataset_krx(normalization, stock, test_days, T, k)
