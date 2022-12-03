@@ -150,6 +150,9 @@ class Dataset_fi2010:
         """Generates samples of data"""
         return self.x[index], self.y[index]
 
+    def get_midprice(self):
+        return []
+
 
 def __vis_sample_lob__():
     import matplotlib.pyplot as plt
