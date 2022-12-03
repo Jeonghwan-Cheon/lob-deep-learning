@@ -95,7 +95,6 @@ class Deeplob(nn.Module):
 
         x = x.permute(0, 2, 1, 3)
         x = torch.reshape(x, (-1, x.shape[1], x.shape[2]))
-        x = self.dropout(x)
         x, _ = self.gru(x, h0)
         x = x[:, -1, :]
 
