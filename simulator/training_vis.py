@@ -17,6 +17,7 @@ def vis_training_process(model_id):
     plt.legend()
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
+    plt.ylim([0.6, 1.2])
 
     plt.subplot(1, 2, 2)
     plt.plot(training_info['train_acc_hist'], label='train acc')
@@ -24,6 +25,7 @@ def vis_training_process(model_id):
     plt.legend()
     plt.xlabel('Epoch')
     plt.ylabel('Accuracy')
+    plt.ylim([0.5, 0.9])
 
     path = logger.find_save_path(model_id)
     plt.savefig(os.path.join(path, 'training_process.svg'), format='svg')

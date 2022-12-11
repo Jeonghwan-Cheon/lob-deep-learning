@@ -75,7 +75,8 @@ class Lobster(nn.Module):
             nn.BatchNorm2d(64),
         )
 
-        # lstm layers
+        # gru layers
+        self.dropout = nn.Dropout(p=0.1)
         self.gru = nn.GRU(input_size=192, hidden_size=64, num_layers=1, batch_first=True)
         self.fc1 = nn.Linear(64, 3)
 
@@ -94,6 +95,7 @@ class Lobster(nn.Module):
 
         x = x.permute(0, 2, 1, 3)
         x = torch.reshape(x, (-1, x.shape[1], x.shape[2]))
+        x = self.dropout(x)
         x, _ = self.gru(x, h0)
         x = x[:, -1, :]
 
