@@ -37,10 +37,10 @@ Lastly, our project provides some modules that test the classification performan
 - To ensure model works on current market microstructure, we collected LOB of two futures (KS200, KQ150) for 13 days (Nov 16 ~ Dec 2, 2022) without down-sampling.
 - KRX future market has 5 levels limit order book system.
 - Using ```loaders.krx_preprocess.__normalize_data__```, you can normalize the raw collected data with three different methods: Z-scoring, min-max and decimal-precision normalization.
-- Using ```loaders.krx_loader.__split_x_y__```, you can generate the label with any arbitrary predict horizon. More detailed labeling method is shown in following equation.  
-  $$m_{-}(t)=\frac{1}{k} \sum_{i=0}^k p_{t-i} \\
-  quad m_{+}(t)=\frac{1}{k} \sum_{i=0}^k p_{t+i}$$ \\
-  l_t=\frac{m_{+}(t)-m_{-}(t)}{m_{-}(t)}$$  
+- Using ```loaders.krx_loader.__split_x_y__```, you can generate the label with any arbitrary predict horizon. More detailed labeling method is shown in following equation.
+  $$m_{-}(t)=\frac{1}{k} \sum_{i=0}^k p_{t-i}$$
+  $$m_{+}(t)=\frac{1}{k} \sum_{i=0}^k p_{t+i}$$
+  $$l_t=\frac{m_{+}(t)-m_{-}(t)}{m_{-}(t)}$$  
   If the $l_t > +\alpha$, the label is $+1$ (Up). Else, if the $l_t < -\alpha$, the label is $-1$ (Down). Otherwise, the label is $0$ (Stationary). The $\alpha$ indicates threshold.
 
 ## Models
@@ -54,7 +54,8 @@ Lastly, our project provides some modules that test the classification performan
 - LOBster is a lighten version of DeepLOB tuned for 5 level orderbook system (i.e. Korea exchange future market). Convolution layer for feature extraction were modified for 5 level orderbook input data.
 - Since the number of input feature is reduced to half, the risk of overfitting the model has increased. Thus, we adopted a symmetric-mask dropout after the inception layer. Symmetric-mask dropout means that mask is replicated in time-axis, to keep the timeseries dependent extracted feature.
 - LSTM was replaced to Gated recurrent unit (Chung et al., 2014)
-### Hierarchical feature ingegration
+
+### Hierarchical feature integration
 ![Hierarchical feature integration](./sources/hierarchical_feature_integration.png)
 - DeepLOB and our modified model has three convolutional block. This architecture is a specialized form of convolutional neural network to utilize the characteristic of limit order book data.
 - The first convolutional block integrates the price and volume data in each ask-side and bid-side.
